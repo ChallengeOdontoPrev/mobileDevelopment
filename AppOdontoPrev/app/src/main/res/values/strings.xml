@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">AppOdontoPrev</string>
+    <string-array name="spinner_options">
+        <item>Unidade</item>
+        <item>Opção 2</item>
+        <item>Opção 3</item>
+        <item>Opção 4</item>
+        <item>Opção 5</item>
+    </string-array>
+</resources>
