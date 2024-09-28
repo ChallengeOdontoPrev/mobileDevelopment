@@ -12,17 +12,14 @@ class MenuLoginActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_menu_login)
 
-        // Find the ImageViews
         val botaoAtendente = findViewById<ImageView>(R.id.botaoAtendente)
         val botaoDentista = findViewById<ImageView>(R.id.botaoDentista)
 
-        // Set click listener for Atendente
         botaoAtendente.setOnClickListener {
             val intent = Intent(this, LoginAtendenteActivity::class.java)
             startActivity(intent)
         }
 
-        // Set click listener for Dentista
         botaoDentista.setOnClickListener {
             val intent = Intent(this, LoginDentistaActivity::class.java)
             startActivity(intent)

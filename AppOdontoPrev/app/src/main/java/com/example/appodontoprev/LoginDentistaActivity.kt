@@ -39,5 +39,13 @@ class LoginDentistaActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val btnEntrar = findViewById<Button>(R.id.btnEntrar)
+        btnEntrar.setOnClickListener {
+            val intent = Intent(this, MenuPrincipalActivity::class.java)
+            intent.putExtra("tipoUsuario", "dentista")
+            startActivity(intent)
+            finish() // Fecha a atividade de login
+        }
+
     }
 }
