@@ -7,4 +7,14 @@
         <item>Opção 4</item>
         <item>Opção 5</item>
     </string-array>
+    <string-array name="dentist_names">
+        <item>Dentistas</item>
+        <item>Dr. Carlos Oliveira</item>
+        <item>Dra. Mariana Santos</item>
+        <item>Dr. Ricardo Ferreira</item>
+        <item>Dra. Juliana Costa</item>
+        <item>Dr. Felipe Rodrigues</item>
+        <item>Dra. Beatriz Almeida</item>
+        <item>Dr. Eduardo Martins</item>
+    </string-array>
 </resources>

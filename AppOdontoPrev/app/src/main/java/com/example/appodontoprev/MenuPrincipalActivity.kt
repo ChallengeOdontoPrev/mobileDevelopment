@@ -21,7 +21,9 @@ class MenuPrincipalActivity : AppCompatActivity() {
         val btnConfig = findViewById<Button>(R.id.btnConfig)
         val btnHist = findViewById<Button>(R.id.btnHist)
         val btnConsultas = findViewById<Button>(R.id.btnConsultas)
-        val btnSuporte = findViewById<Button>(R.id.suporte) // botão de "Fale com a Odontoprev"
+        val btnSuporte = findViewById<Button>(R.id.suporte)
+        val btnComUsar = findViewById<Button>(R.id.btnComUsar)
+
 
         when (tipoUsuario) {
             "dentista" -> iconPerson.setImageResource(R.drawable.iconedentista)
@@ -42,6 +44,12 @@ class MenuPrincipalActivity : AppCompatActivity() {
 
         btnConsultas.setOnClickListener {
             val intent = Intent(this, ConsultasActivity::class.java)
+            intent.putExtra("tipoUsuario", tipoUsuario)
+            startActivity(intent)
+        }
+
+        btnComUsar.setOnClickListener {
+            val intent = Intent(this, ComoUsarActivity::class.java)
             intent.putExtra("tipoUsuario", tipoUsuario)
             startActivity(intent)
         }
