@@ -25,7 +25,7 @@
         tools:ignore="MissingConstraints" />
 
     <Button
-        android:id="@+id/buttonTeste"
+        android:id="@+id/btnComUsar"
         android:layout_width="177dp"
         android:layout_height="157dp"
         android:backgroundTint="#FF6052"
@@ -45,7 +45,7 @@
         tools:ignore="MissingConstraints" />
 
     <Button
-        android:id="@+id/buttonTeste1"
+        android:id="@+id/btnConfig"
         android:layout_width="177dp"
         android:layout_height="157dp"
         android:backgroundTint="#FF6052"
@@ -65,7 +65,7 @@
         tools:ignore="MissingConstraints" />
 
     <Button
-        android:id="@+id/buttonTeste2"
+        android:id="@+id/btnHist"
         android:layout_width="177dp"
         android:layout_height="157dp"
         android:backgroundTint="#FF6052"
@@ -85,7 +85,7 @@
         tools:ignore="MissingConstraints" />
 
     <Button
-        android:id="@+id/buttonTeste3"
+        android:id="@+id/btnConsultas"
         android:layout_width="177dp"
         android:layout_height="157dp"
         android:backgroundTint="#FF6052"
@@ -105,7 +105,7 @@
         tools:ignore="MissingConstraints" />
 
     <Button
-        android:id="@+id/buttonTeste4"
+        android:id="@+id/suporte"
         android:layout_width="387dp"
         android:layout_height="137dp"
         android:backgroundTint="#FF6052"

@@ -13,7 +13,7 @@
         android:theme="@style/Theme.AppOdontoPrev"
         tools:targetApi="31">
         <activity
-            android:name=".ConfiguracoesActivity"
+            android:name=".MenuLoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,6 +38,15 @@
             android:exported="false" />
         <activity
             android:name=".MenuPrincipalActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ConfiguracoesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".HistoricoConsultasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ConsultasActivity"
             android:exported="false" />
     </application>
 
