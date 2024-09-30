@@ -17,4 +17,14 @@
         <item>Dra. Beatriz Almeida</item>
         <item>Dr. Eduardo Martins</item>
     </string-array>
+    <string-array name="servicos">
+        <item>Procedimento</item>
+        <item>Restauração</item>
+        <item>Tratamento de Canal</item>
+        <item>Extração Dental</item>
+        <item>Clareamento Dental</item>
+        <item>Remoção de Aparelho Ortodôntico</item>
+        <item>Colocação de Aparelho Metálico</item>
+        <item>Prótese Dentária</item>
+    </string-array>
 </resources>

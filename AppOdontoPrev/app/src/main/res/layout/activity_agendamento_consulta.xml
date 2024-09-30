@@ -84,15 +84,13 @@
             android:textColor="@android:color/white"
             android:textSize="18sp" />
 
-        <EditText
-            android:layout_width="280dp"
+        <Spinner
+            android:layout_width="281dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@android:color/white"
-            android:hint="Motivo consulta"
-            android:padding="12dp"
-            android:lines="3"
-            android:gravity="top" />
+            android:entries="@array/servicos"
+            android:padding="14dp" />
 
         <EditText
             android:layout_width="280dp"
@@ -113,12 +111,12 @@
             android:drawableEnd="@drawable/relogio" />
 
         <Spinner
-            android:layout_width="280dp"
+            android:layout_width="281dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@android:color/white"
-            android:padding="12dp"
-            android:entries="@array/dentist_names" />
+            android:entries="@array/dentist_names"
+            android:padding="14dp" />
 
         <Button
             android:layout_width="280dp"
