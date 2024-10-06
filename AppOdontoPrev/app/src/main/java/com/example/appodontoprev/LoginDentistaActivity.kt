@@ -3,9 +3,12 @@ package com.example.appodontoprev
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Patterns
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
 
@@ -47,5 +50,39 @@ class LoginDentistaActivity : AppCompatActivity() {
             finish() // Fecha a atividade de login
         }
 
+        val emailEditText = findViewById<EditText>(R.id.inputEmailMedi)
+        val senhaEditText = findViewById<EditText>(R.id.inputSenhaMedi)
+
+        // Handle "Entrar" button click
+        btnEntrar.setOnClickListener {
+            val email = emailEditText.text.toString()
+            val senha = senhaEditText.text.toString()
+
+            // Validate email and password
+            if (email.isBlank() || senha.isBlank() || !isEmailValid(email)) {
+                showAlert("Digite um e-mail válido e uma senha")
+            } else {
+                // Navigate to the main menu
+                val intent = Intent(this, MenuPrincipalActivity::class.java)
+                intent.putExtra("tipoUsuario", "dentista")
+                startActivity(intent)
+                finish()
+
+            }
+        }
+    }
+
+    // Check if the email is valid
+    private fun isEmailValid(email: String): Boolean {
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
+    // Show alert dialog
+    private fun showAlert(message: String) {
+        AlertDialog.Builder(this)
+            .setTitle("Erro")
+            .setMessage(message)
+            .setPositiveButton("OK", null)
+            .show()
     }
 }

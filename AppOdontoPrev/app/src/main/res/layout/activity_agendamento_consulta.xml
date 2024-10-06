@@ -13,16 +13,28 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="50dp" />
+            android:layout_height="20dp" />
 
         <ImageButton
             android:id="@+id/btnVolAgenConsul"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="44dp"
+            android:layout_height="33dp"
             android:layout_gravity="start"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Back button"
-            android:src="@drawable/voltar" />
+            android:src="@drawable/vol" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Agendamento de Consulta"
+            android:textSize="20dp"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/open_sans"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal" />
 
         <EditText
             android:layout_width="280dp"
@@ -39,8 +51,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            android:fontFamily="@font/open_sans"
             android:text="Dados Paciente"
             android:textColor="@android:color/white"
+            android:textFontWeight="800"
             android:textSize="18sp" />
 
         <EditText
@@ -80,8 +94,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            android:fontFamily="@font/open_sans"
             android:text="Dados consulta"
             android:textColor="@android:color/white"
+            android:textFontWeight="800"
             android:textSize="18sp" />
 
         <Spinner
@@ -119,13 +135,15 @@
             android:padding="14dp" />
 
         <Button
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
+            android:id="@+id/btnAgenConsul"
+            android:layout_width="325dp"
+            android:layout_height="60dp"
             android:layout_marginTop="24dp"
             android:backgroundTint="#FF6052"
             android:padding="16dp"
             android:text="Agendar Consulta"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:textSize="16dp" />
 
     </LinearLayout>
 </ScrollView>

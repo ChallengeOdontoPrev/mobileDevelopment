@@ -73,6 +73,12 @@
         <activity
             android:name=".ComoUsarActivity"
             android:exported="false" />
+        <activity
+            android:name=".ConsultaPacienteActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AnaliseConsultaActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

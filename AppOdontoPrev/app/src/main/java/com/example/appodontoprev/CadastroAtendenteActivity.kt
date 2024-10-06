@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
 class CadastroAtendenteActivity : AppCompatActivity() {
@@ -24,10 +25,9 @@ class CadastroAtendenteActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
 
-        // Encontrar o botão Voltar
+        // Encontrar os botões Voltar
         val botaoVoltar = findViewById<Button>(R.id.botaoVoltarCadastro)
         val botaoVoltarLogin = findViewById<TextView>(R.id.botaoVoltarLogin)
-
 
         // Configurar o OnClickListener para o botão Voltar
         botaoVoltar.setOnClickListener {
@@ -35,10 +35,22 @@ class CadastroAtendenteActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+
         botaoVoltarLogin.setOnClickListener {
             val intent = Intent(this, LoginAtendenteActivity::class.java)
             startActivity(intent)
             finish()
+        }
+
+        // Botão para cadastrar
+        val botaoCadastrar = findViewById<Button>(R.id.btnCadastrarAten)
+        botaoCadastrar.setOnClickListener {
+            // Exibir alerta ao clicar no botão de cadastrar
+            AlertDialog.Builder(this)
+                .setTitle("Em breve")
+                .setMessage("Ainda não é possível se cadastrar, em breve essa opção estará funcionando.")
+                .setPositiveButton("OK", null)
+                .show()
         }
     }
 }

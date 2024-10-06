@@ -182,6 +182,10 @@
             android:textFontWeight="800"
             android:textSize="16dp" />
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="40dp" />
+
     </LinearLayout>
 
 </ScrollView>

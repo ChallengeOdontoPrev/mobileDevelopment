@@ -1,12 +1,13 @@
 package com.example.appodontoprev
 
-
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
 class CadastroDentistaActivity : AppCompatActivity() {
@@ -24,7 +25,6 @@ class CadastroDentistaActivity : AppCompatActivity() {
         spinner.adapter = adapter
 
         val botVolLoginDent = findViewById<TextView>(R.id.botVolLoginDent)
-
         botVolLoginDent.setOnClickListener {
             val intent = Intent(this, LoginDentistaActivity::class.java)
             startActivity(intent)
@@ -32,12 +32,21 @@ class CadastroDentistaActivity : AppCompatActivity() {
         }
 
         val viewVolLogDent = findViewById<TextView>(R.id.viewVolLogDent)
-
         viewVolLogDent.setOnClickListener {
             val intent = Intent(this, LoginDentistaActivity::class.java)
             startActivity(intent)
             finish()
         }
 
+        // Botão para cadastrar
+        val botaoCadastrar = findViewById<Button>(R.id.btnCadastrarDent)
+        botaoCadastrar.setOnClickListener {
+            // Exibir alerta ao clicar no botão de cadastrar
+            AlertDialog.Builder(this)
+                .setTitle("Em breve")
+                .setMessage("Ainda não é possível se cadastrar, em breve essa opção estará funcionando.")
+                .setPositiveButton("OK", null)
+                .show()
+        }
     }
 }

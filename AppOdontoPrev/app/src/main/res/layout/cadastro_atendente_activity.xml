@@ -30,7 +30,7 @@
         android:inputType="textEmailAddress"
         android:padding="15dp"
         android:textColorHint="#000000"
-        android:textSize="15dp"
+        android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
@@ -41,7 +41,7 @@
     <EditText
         android:id="@+id/editTextText9"
         android:layout_width="320dp"
-        android:layout_height="59dp"
+        android:layout_height="60dp"
         android:background="#FFFFFF"
         android:ems="10"
         android:fontFamily="@font/open_sans"
@@ -51,7 +51,8 @@
         android:radius="20dp"
         android:textColorHint="#000000"
         android:textFontWeight="400"
-        android:textSize="15dp"
+        android:textSize="16dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
@@ -72,7 +73,7 @@
         android:padding="15dp"
         android:textColor="#000000"
         android:textColorHint="#000000"
-        android:textSize="15dp"
+        android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.472"
@@ -112,7 +113,7 @@
         app:layout_constraintVertical_bias="0.201" />
 
     <Button
-        android:id="@+id/btnEntrar"
+        android:id="@+id/btnCadastrarAten"
         android:layout_width="143dp"
         android:layout_height="66dp"
         android:backgroundTint="#FF6052"

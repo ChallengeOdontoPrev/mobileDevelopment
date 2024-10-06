@@ -65,14 +65,14 @@
         app:layout_constraintVertical_bias="0.76" />
 
     <EditText
-        android:id="@+id/editTextText1"
+        android:id="@+id/inputSenhaMedi"
         android:layout_width="341dp"
         android:layout_height="51dp"
         android:background="#FFFFFF"
         android:ems="10"
         android:fontFamily="@font/open_sans"
         android:hint="Senha"
-        android:inputType="text"
+        android:inputType="textPassword"
         android:padding="15dp"
         android:radius="20dp"
         android:textColorHint="#000000"
@@ -86,7 +86,7 @@
         tools:ignore="MissingConstraints" />
 
     <EditText
-        android:id="@+id/editTextText2"
+        android:id="@+id/inputEmailMedi"
         android:layout_width="341dp"
         android:layout_height="51dp"
         android:background="#FFFFFF"

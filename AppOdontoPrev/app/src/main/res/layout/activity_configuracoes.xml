@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.082"
-        app:srcCompat="@drawable/voltar" />
+        app:srcCompat="@drawable/vol" />
 
     <TextView
         android:id="@+id/textView1"

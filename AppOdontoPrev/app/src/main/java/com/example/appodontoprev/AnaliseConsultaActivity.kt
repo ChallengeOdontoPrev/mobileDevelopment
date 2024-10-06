@@ -2,11 +2,15 @@ package com.example.appodontoprev
 
 import android.Manifest
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -20,8 +24,14 @@ class AnaliseConsultaActivity : AppCompatActivity() {
     private lateinit var buttonFotoInicial: Button
     private lateinit var imageViewFotoFinal: ImageView
     private lateinit var buttonFotoFinal: Button
+    private lateinit var checkBoxInicial: CheckBox
+    private lateinit var checkBoxFinal: CheckBox
+    private lateinit var btnFinalConsul: Button
     private var photoUriInicial: Uri? = null
     private var photoUriFinal: Uri? = null
+    private var tipoUsuario: String = ""
+    private var fotoInicialEnviada = false
+    private var fotoFinalEnviada = false
 
     private val cameraPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
@@ -37,22 +47,34 @@ class AnaliseConsultaActivity : AppCompatActivity() {
 
     private val cameraLauncherInicial = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
-            photoUriInicial?.let { displayImage(it, true) }
+            photoUriInicial?.let {
+                displayImage(it, true)
+                updateCheckBox(checkBoxInicial)
+            }
         }
     }
 
     private val cameraLauncherFinal = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
-            photoUriFinal?.let { displayImage(it, false) }
+            photoUriFinal?.let {
+                displayImage(it, false)
+                updateCheckBox(checkBoxFinal)
+            }
         }
     }
 
     private val galleryLauncherInicial = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        uri?.let { displayImage(it, true) }
+        uri?.let {
+            displayImage(it, true)
+            updateCheckBox(checkBoxInicial)
+        }
     }
 
     private val galleryLauncherFinal = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        uri?.let { displayImage(it, false) }
+        uri?.let {
+            displayImage(it, false)
+            updateCheckBox(checkBoxFinal)
+        }
     }
 
     private var isInitialPhoto = true
@@ -61,10 +83,20 @@ class AnaliseConsultaActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_analise_consulta)
 
+        tipoUsuario = intent.getStringExtra("tipoUsuario") ?: ""
+
         imageViewFotoInicial = findViewById(R.id.imageViewFotoInicial)
         buttonFotoInicial = findViewById(R.id.FotoInicial)
         imageViewFotoFinal = findViewById(R.id.imageViewFotoFinal)
         buttonFotoFinal = findViewById(R.id.fotoFinal)
+        checkBoxInicial = findViewById(R.id.checkInicial)
+        checkBoxFinal = findViewById(R.id.checkFinal)
+        btnFinalConsul = findViewById(R.id.btnFinalConsul)
+
+        checkBoxInicial.isClickable = false
+        checkBoxFinal.isClickable = false
+
+        disableFotoFinalButton()
 
         buttonFotoInicial.setOnClickListener {
             isInitialPhoto = true
@@ -72,8 +104,20 @@ class AnaliseConsultaActivity : AppCompatActivity() {
         }
 
         buttonFotoFinal.setOnClickListener {
-            isInitialPhoto = false
-            showPhotoSourceDialog()
+            if (fotoInicialEnviada) {
+                isInitialPhoto = false
+                showPhotoSourceDialog()
+            } else {
+                showFotoInicialAlertDialog()
+            }
+        }
+
+        btnFinalConsul.setOnClickListener {
+            if (fotoInicialEnviada && fotoFinalEnviada) {
+                showFinalizationDialog()
+            } else {
+                showAlertDialog()
+            }
         }
     }
 
@@ -141,5 +185,64 @@ class AnaliseConsultaActivity : AppCompatActivity() {
             imageViewFotoFinal.setImageURI(uri)
             imageViewFotoFinal.visibility = View.VISIBLE
         }
+    }
+
+    private fun updateCheckBox(checkBox: CheckBox) {
+        checkBox.isChecked = true
+        checkBox.buttonTintList = ColorStateList.valueOf(Color.GREEN)
+        runOnUiThread {
+            checkBox.invalidate()
+        }
+
+        if (checkBox == checkBoxInicial) {
+            fotoInicialEnviada = true
+            enableFotoFinalButton()
+        } else if (checkBox == checkBoxFinal) {
+            fotoFinalEnviada = true
+        }
+    }
+
+    private fun disableFotoFinalButton() {
+        buttonFotoFinal.isEnabled = false
+        buttonFotoFinal.setBackgroundColor(Color.GRAY)
+    }
+
+    private fun enableFotoFinalButton() {
+        buttonFotoFinal.isEnabled = true
+        buttonFotoFinal.setBackgroundColor(Color.parseColor("#FF6052"))
+    }
+
+    private fun showFotoInicialAlertDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("ATENÇÃO")
+            .setMessage("A foto inicial precisa ser enviada primeiro!")
+            .setPositiveButton("OK", null)
+            .show()
+    }
+
+    private fun showAlertDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("ATENÇÃO")
+            .setMessage("Não é possível prosseguir sem enviar as fotos do início e do fim do procedimento!")
+            .setPositiveButton("OK", null)
+            .show()
+    }
+
+    private fun showFinalizationDialog() {
+        AlertDialog.Builder(this)
+            .setMessage("Obrigado por colaborar conosco, suas fotos foram analisadas e aprovadas")
+            .setPositiveButton("OK") { _, _ ->
+                navigateToMainMenu()
+            }
+            .setCancelable(false)
+            .show()
+    }
+
+    private fun navigateToMainMenu() {
+        val intent = Intent(this, MenuPrincipalActivity::class.java)
+        intent.putExtra("tipoUsuario", tipoUsuario)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
+        finish()
     }
 }
