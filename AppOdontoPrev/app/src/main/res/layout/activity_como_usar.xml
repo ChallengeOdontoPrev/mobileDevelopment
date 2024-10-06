@@ -8,8 +8,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:elevation="0dp"
+        android:translationZ="0dp">
 
         <Space
             android:layout_width="match_parent"
@@ -20,9 +22,9 @@
             android:id="@+id/logoImageView"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/icone"
+            android:layout_gravity="center"
             android:contentDescription="Logo OdontoPrev"
-            android:layout_gravity="center"/>
+            android:src="@drawable/icone" />
 
         <Space
             android:layout_width="match_parent"
@@ -60,24 +62,24 @@
             android:id="@+id/scheduleDescriptionTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Após logar como atendente, vá até 'Consulta' e selecione 'Agendar Consulta'."
-            android:textColor="#FFFFFF"
             android:layout_marginTop="8dp"
-            android:textSize="16dp"
             android:fontFamily="@font/open_sans"
             android:fontWeight="400"
-            android:gravity="start"/>
+            android:gravity="start"
+            android:text="Após logar como atendente, vá até 'Consulta' e selecione 'Agendar Consulta'."
+            android:textColor="#FFFFFF"
+            android:textSize="16dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Digite o RG do paciente. Se estiver cadastrado, selecione o nome e agende a consulta. Caso contrário, cadastre um novo paciente clicando no ícone '+'."
-            android:textColor="#FFFFFF"
             android:layout_marginTop="8dp"
-            android:textSize="16dp"
             android:fontFamily="@font/open_sans"
             android:fontWeight="400"
-            android:gravity="start"/>
+            android:gravity="start"
+            android:text="Digite o RG do paciente. Se estiver cadastrado, selecione o nome e agende a consulta. Caso contrário, cadastre um novo paciente clicando no ícone '+'."
+            android:textColor="#FFFFFF"
+            android:textSize="16dp" />
 
         <!-- Título: Iniciar Atendimento -->
         <TextView
@@ -97,13 +99,13 @@
             android:id="@+id/startDescriptionTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No dia da consulta, vá em 'Consultas', selecione o paciente, e clique em 'Iniciar'."
-            android:textColor="#FFFFFF"
             android:layout_marginTop="8dp"
-            android:textSize="16dp"
             android:fontFamily="@font/open_sans"
             android:fontWeight="400"
-            android:gravity="start"/>
+            android:gravity="start"
+            android:text="No dia da consulta, vá em 'Consultas', selecione o paciente, e clique em 'Iniciar'."
+            android:textColor="#FFFFFF"
+            android:textSize="16dp" />
 
         <!-- Título: Envio de Fotos -->
         <TextView
@@ -124,24 +126,24 @@
             android:id="@+id/sendPhotosDescriptionTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="O dentista deve enviar fotos antes e depois do procedimento via aplicativo, podendo tirar diretamente ou escolher da galeria."
-            android:textColor="#FFFFFF"
             android:layout_marginTop="8dp"
-            android:textSize="16dp"
             android:fontFamily="@font/open_sans"
             android:fontWeight="400"
-            android:gravity="start"/>
+            android:gravity="start"
+            android:text="O dentista deve enviar fotos antes e depois do procedimento via aplicativo, podendo tirar diretamente ou escolher da galeria."
+            android:textColor="#FFFFFF"
+            android:textSize="16dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Após o envio das fotos, aguarde a validação para continuar ou finalizar a consulta."
-            android:textColor="#FFFFFF"
             android:layout_marginTop="8dp"
-            android:textSize="16dp"
             android:fontFamily="@font/open_sans"
             android:fontWeight="400"
-            android:gravity="start"/>
+            android:gravity="start"
+            android:text="Após o envio das fotos, aguarde a validação para continuar ou finalizar a consulta."
+            android:textColor="#FFFFFF"
+            android:textSize="16dp" />
 
         <!-- Título: Finalização -->
         <TextView
@@ -161,13 +163,13 @@
             android:id="@+id/finalizationDescriptionTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Após a consulta, o dentista será notificado do sucesso do atendimento."
-            android:textColor="#FFFFFF"
             android:layout_marginTop="8dp"
-            android:textSize="16dp"
             android:fontFamily="@font/open_sans"
             android:fontWeight="400"
-            android:gravity="start"/>
+            android:gravity="start"
+            android:text="Após a consulta, o dentista será notificado do sucesso do atendimento."
+            android:textColor="#FFFFFF"
+            android:textSize="16dp" />
 
         <!-- Botão Voltar -->
         <Button
