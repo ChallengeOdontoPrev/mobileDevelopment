@@ -3,14 +3,12 @@ package com.example.appodontoprev
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
 class AlterarSenhaActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_alterar_senha)
 
         val origem = intent.getStringExtra("origem")
@@ -25,5 +23,20 @@ class AlterarSenhaActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+
+        val btnEnviar = findViewById<Button>(R.id.btnEntrar)
+        btnEnviar.setOnClickListener {
+            showAlert()
+        }
+    }
+
+    private fun showAlert() {
+        AlertDialog.Builder(this)
+            .setTitle("Aviso")
+            .setMessage("Ainda não é possível alterar a senha, função disponível em breve!")
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 }
