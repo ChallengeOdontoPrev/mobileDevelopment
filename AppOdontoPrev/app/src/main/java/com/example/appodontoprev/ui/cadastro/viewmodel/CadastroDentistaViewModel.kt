@@ -1,6 +1,3 @@
-// ui/cadastro/viewmodel/CadastroDentistaViewModel.kt
-package com.example.appodontoprev.ui.cadastro.viewmodel
-
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -30,7 +27,6 @@ class CadastroDentistaViewModel : ViewModel() {
         carregarClinicas()
     }
 
-    // Função para carregar lista de clínicas
     private fun carregarClinicas() {
         viewModelScope.launch {
             _isLoading.value = true
@@ -42,7 +38,6 @@ class CadastroDentistaViewModel : ViewModel() {
         }
     }
 
-    // Função para cadastrar dentista
     fun cadastrarDentista(
         email: String,
         senha: String,

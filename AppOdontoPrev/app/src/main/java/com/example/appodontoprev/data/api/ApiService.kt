@@ -1,5 +1,3 @@
-package com.example.appodontoprev.data.api
-
 import com.example.appodontoprev.data.model.request.DentistaSignupRequest
 import com.example.appodontoprev.data.model.response.ClinicResponse
 import com.example.appodontoprev.data.model.response.SignupResponse

@@ -1,4 +1,9 @@
-package com.example.appodontoprev
+import com.example.appodontoprev.AlterarSenhaActivity
+import com.example.appodontoprev.CadastroAtendenteActivity
+import com.example.appodontoprev.MenuLoginActivity
+import com.example.appodontoprev.MenuPrincipalActivity
+import com.example.appodontoprev.R
+
 
 import android.content.Context
 import android.content.Intent

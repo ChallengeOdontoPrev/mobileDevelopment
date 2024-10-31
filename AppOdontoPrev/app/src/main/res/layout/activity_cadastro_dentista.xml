@@ -6,102 +6,16 @@
     android:layout_height="match_parent"
     android:background="#0066FF">
 
-
-    <EditText
-        android:id="@+id/editTextTextPassword"
-        android:layout_width="320dp"
-        android:layout_height="59dp"
-        android:ems="10"
-        android:fontFamily="@font/open_sans"
-        android:hint="Senha"
-        android:inputType="textPassword"
-        android:padding="15dp"
-        android:textColor="#000000"
-        android:textColorHint="#000000"
-        android:textSize="16dp"
-        android:background="@drawable/rounded_input"
+    <!-- ProgressBar corrigido -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.524" />
-
-    <EditText
-        android:id="@+id/editTextText9"
-        android:layout_width="320dp"
-        android:layout_height="59dp"
-        android:ems="10"
-        android:fontFamily="@font/open_sans"
-        android:hint="Nome"
-        android:inputType="text"
-        android:padding="15dp"
-        android:radius="20dp"
-        android:textColorHint="#000000"
-        android:textFontWeight="400"
-        android:textSize="16dp"
-        android:background="@drawable/rounded_input"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.341"
-        tools:ignore="MissingConstraints" />
-
-    <EditText
-        android:id="@+id/editTextText2"
-        android:layout_width="320dp"
-        android:layout_height="59dp"
-        android:ems="10"
-        android:fontFamily="@font/open_sans"
-        android:hint="CRO"
-        android:inputType="text"
-        android:padding="15dp"
-        android:radius="20dp"
-        android:textColorHint="#000000"
-        android:textFontWeight="400"
-        android:textSize="16dp"
-        android:background="@drawable/rounded_input"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.615"
-        tools:ignore="MissingConstraints" />
-
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="320dp"
-        android:layout_height="59dp"
-        android:background="@drawable/rounded_input"
-        android:padding="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.707" />
-
-    <EditText
-        android:id="@+id/editTextTextEmailAddress"
-        android:layout_width="320dp"
-        android:layout_height="59dp"
-        android:ems="10"
-        android:fontFamily="@font/open_sans"
-        android:hint="E-mail"
-        android:inputType="textEmailAddress"
-        android:padding="15dp"
-        android:textColorHint="#000000"
-        android:textSize="16dp"
-        android:background="@drawable/rounded_input"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.432" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageView5"
@@ -134,6 +48,152 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.201" />
 
+    <!-- Nome -->
+
+    <!-- Email -->
+
+    <!-- Senha -->
+
+    <!-- Data de Nascimento (Novo campo) -->
+
+    <!-- RG -->
+
+    <!-- CRO -->
+
+    <!-- Spinner Clínicas -->
+
+    <EditText
+        android:id="@+id/editTextText9"
+        android:layout_width="320dp"
+        android:layout_height="59dp"
+        android:background="@drawable/rounded_input"
+        android:ems="10"
+        android:fontFamily="@font/open_sans"
+        android:hint="Nome"
+        android:inputType="text"
+        android:padding="15dp"
+        android:radius="20dp"
+        android:textColorHint="#000000"
+        android:textFontWeight="400"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.275" />
+
+    <EditText
+        android:id="@+id/editTextRG"
+        android:layout_width="320dp"
+        android:layout_height="59dp"
+        android:background="@drawable/rounded_input"
+        android:ems="10"
+        android:fontFamily="@font/open_sans"
+        android:hint="RG"
+        android:inputType="text"
+        android:padding="15dp"
+        android:textColorHint="#000000"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.639" />
+
+    <EditText
+        android:id="@+id/editTextDataNascimento"
+        android:layout_width="320dp"
+        android:layout_height="59dp"
+        android:background="@drawable/rounded_input"
+        android:ems="10"
+        android:fontFamily="@font/open_sans"
+        android:hint="Data de Nascimento (AAAA-MM-DD)"
+        android:inputType="date"
+        android:padding="15dp"
+        android:textColorHint="#000000"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.55" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="320dp"
+        android:layout_height="59dp"
+        android:background="@drawable/rounded_input"
+        android:padding="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.823" />
+
+    <EditText
+        android:id="@+id/editTextText2"
+        android:layout_width="320dp"
+        android:layout_height="59dp"
+        android:background="@drawable/rounded_input"
+        android:ems="10"
+        android:fontFamily="@font/open_sans"
+        android:hint="CRO"
+        android:inputType="text"
+        android:padding="15dp"
+        android:radius="20dp"
+        android:textColorHint="#000000"
+        android:textFontWeight="400"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.731" />
+
+    <EditText
+        android:id="@+id/editTextTextEmailAddress"
+        android:layout_width="320dp"
+        android:layout_height="59dp"
+        android:background="@drawable/rounded_input"
+        android:ems="10"
+        android:fontFamily="@font/open_sans"
+        android:hint="E-mail"
+        android:inputType="textEmailAddress"
+        android:padding="15dp"
+        android:textColorHint="#000000"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.365" />
+
+    <EditText
+        android:id="@+id/editTextTextPassword"
+        android:layout_width="320dp"
+        android:layout_height="59dp"
+        android:background="@drawable/rounded_input"
+        android:ems="10"
+        android:fontFamily="@font/open_sans"
+        android:hint="Senha"
+        android:inputType="textPassword"
+        android:padding="15dp"
+        android:textColor="#000000"
+        android:textColorHint="#000000"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.459" />
+
     <Button
         android:id="@+id/btnCadastrarDent"
         android:layout_width="143dp"
@@ -147,7 +207,7 @@
         app:layout_constraintHorizontal_bias="0.828"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.912" />
+        app:layout_constraintVertical_bias="0.972" />
 
     <Button
         android:id="@+id/botVolLoginDent"
@@ -162,7 +222,7 @@
         app:layout_constraintHorizontal_bias="0.126"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.91" />
+        app:layout_constraintVertical_bias="0.97" />
 
     <TextView
         android:id="@+id/viewVolLogDent"
@@ -177,9 +237,9 @@
         android:textSize="18dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.487"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.8" />
+        app:layout_constraintVertical_bias="0.881" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
