@@ -10,6 +10,9 @@ interface ApiService {
     @POST("auth/signup")
     suspend fun cadastrarDentista(@Body request: DentistaSignupRequest): Response<SignupResponse>
 
+    @POST("auth/signup")
+    suspend fun cadastrarAtendente(@Body request: AtendenteSignupRequest): Response<SignupResponse>
+
     @GET("clinics")
     suspend fun getClinicas(): Response<List<ClinicResponse>>
 }

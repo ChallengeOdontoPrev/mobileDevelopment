@@ -44,13 +44,16 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".CadastroConcluidoActivity"
+            android:exported="false" />
+        <activity
             android:name=".LoginAtendenteActivity"
             android:exported="false" />
         <activity
             android:name=".LoginDentistaActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.cadastro.CadastroAtendenteActivity"
+            android:name=".CadastroAtendenteActivity"
             android:exported="false" />
         <activity
             android:name=".CadastroDentistaActivity"

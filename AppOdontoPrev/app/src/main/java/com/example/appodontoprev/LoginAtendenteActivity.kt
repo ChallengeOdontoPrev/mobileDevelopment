@@ -1,8 +1,4 @@
-import com.example.appodontoprev.AlterarSenhaActivity
-import com.example.appodontoprev.CadastroAtendenteActivity
-import com.example.appodontoprev.MenuLoginActivity
-import com.example.appodontoprev.MenuPrincipalActivity
-import com.example.appodontoprev.R
+package com.example.appodontoprev
 
 
 import android.content.Context

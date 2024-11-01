@@ -1,59 +1,124 @@
 package com.example.appodontoprev
 
-import LoginAtendenteActivity
-
-
+import CadastroAtendenteViewModel
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.appodontoprev.data.model.response.ClinicResponse
 
 class CadastroAtendenteActivity : AppCompatActivity() {
+    private val viewModel: CadastroAtendenteViewModel by viewModels()
+    private lateinit var spinner: Spinner
+    private lateinit var progressBar: ProgressBar
+    private lateinit var clinicas: List<ClinicResponse>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.cadastro_atendente_activity)
 
-        // Configurar o Spinner
-        val spinner: Spinner = findViewById(R.id.spinner)
+        setupViews()
+        setupObservers()
+        setupListeners()
+    }
 
-        // Cria um adapter usando o array de strings
-        val adapter = ArrayAdapter.createFromResource(this,
-            R.array.spinner_options, android.R.layout.simple_spinner_item)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = adapter
+    private fun setupViews() {
+        spinner = findViewById(R.id.spinner)
+        progressBar = findViewById(R.id.progressBar)
 
-        // Encontrar os botões Voltar
-        val botaoVoltar = findViewById<Button>(R.id.botaoVoltarCadastro)
-        val botaoVoltarLogin = findViewById<TextView>(R.id.botaoVoltarLogin)
-
-        // Configurar o OnClickListener para o botão Voltar
-        botaoVoltar.setOnClickListener {
-            val intent = Intent(this, LoginAtendenteActivity::class.java)
-            startActivity(intent)
+        findViewById<TextView>(R.id.botaoVoltarLogin).setOnClickListener {
+            startActivity(Intent(this, LoginAtendenteActivity::class.java))
             finish()
         }
 
-        botaoVoltarLogin.setOnClickListener {
-            val intent = Intent(this, LoginAtendenteActivity::class.java)
-            startActivity(intent)
+        findViewById<Button>(R.id.botaoVoltarCadastro).setOnClickListener {
+            startActivity(Intent(this, LoginAtendenteActivity::class.java))
             finish()
         }
+    }
 
-        // Botão para cadastrar
-        val botaoCadastrar = findViewById<Button>(R.id.btnCadastrarAten)
-        botaoCadastrar.setOnClickListener {
-            // Exibir alerta ao clicar no botão de cadastrar
-            AlertDialog.Builder(this)
-                .setTitle("Em breve")
-                .setMessage("Ainda não é possível se cadastrar, em breve essa opção estará funcionando.")
-                .setPositiveButton("OK", null)
-                .show()
+    private fun setupObservers() {
+        viewModel.isLoading.observe(this) { isLoading ->
+            progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
+
+        viewModel.clinicas.observe(this) { result ->
+            result.onSuccess { clinicasList ->
+                clinicas = clinicasList
+                val clinicasNomes = clinicasList.map { it.name }
+                val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, clinicasNomes)
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinner.adapter = adapter
+            }.onFailure {
+                showError("Erro ao carregar clínicas: ${it.message}")
+            }
+        }
+
+        viewModel.cadastroStatus.observe(this) { result ->
+            result.onSuccess {
+                showSuccess("Cadastro realizado com sucesso!")
+                startActivity(Intent(this, LoginAtendenteActivity::class.java))
+                finish()
+            }.onFailure {
+                showError("Erro no cadastro: ${it.message}")
+            }
+        }
+    }
+
+    private fun setupListeners() {
+        findViewById<Button>(R.id.btnCadastrarAten).setOnClickListener {
+            realizarCadastro()
+        }
+    }
+
+    private fun realizarCadastro() {
+        val email = findViewById<EditText>(R.id.editTextTextEmailAddress).text.toString()
+        val senha = findViewById<EditText>(R.id.editTextTextPassword).text.toString()
+        val nome = findViewById<EditText>(R.id.editTextText9).text.toString()
+        val spinnerPosition = spinner.selectedItemPosition
+
+        if (validarCampos(email, senha, nome) && spinnerPosition >= 0) {
+            val clinicId = clinicas[spinnerPosition].id
+            viewModel.cadastrarAtendente(
+                email = email,
+                senha = senha,
+                nome = nome,
+                rg = "12345678", // Você precisa adicionar um campo RG no layout
+                dataNascimento = "2000-01-01", // Você precisa adicionar um campo data no layout
+                clinicId = clinicId
+            )
+        }
+    }
+
+    private fun validarCampos(email: String, senha: String, nome: String): Boolean {
+        if (email.isBlank() || senha.isBlank() || nome.isBlank()) {
+            showError("Todos os campos são obrigatórios")
+            return false
+        }
+        return true
+    }
+
+    private fun showError(message: String) {
+        AlertDialog.Builder(this)
+            .setTitle("Erro")
+            .setMessage(message)
+            .setPositiveButton("OK", null)
+            .show()
+    }
+
+    private fun showSuccess(message: String) {
+        AlertDialog.Builder(this)
+            .setTitle("Sucesso")
+            .setMessage(message)
+            .setPositiveButton("OK", null)
+            .show()
     }
 }
