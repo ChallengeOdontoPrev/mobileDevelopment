@@ -34,7 +34,6 @@ class CadastroDentistaActivity : AppCompatActivity() {
         spinner = findViewById(R.id.spinner)
         progressBar = findViewById(R.id.progressBar)
 
-        // Configurando outros views
         findViewById<TextView>(R.id.viewVolLogDent).setOnClickListener {
             startActivity(Intent(this, LoginDentistaActivity::class.java))
             finish()
@@ -65,8 +64,9 @@ class CadastroDentistaActivity : AppCompatActivity() {
 
         viewModel.cadastroStatus.observe(this) { result ->
             result.onSuccess {
-                showSuccess("Cadastro realizado com sucesso!")
-                startActivity(Intent(this, LoginDentistaActivity::class.java))
+                val intent = Intent(this, CadastroConcluidoActivity::class.java)
+                intent.putExtra("tipo_usuario", "dentista") // Adicionando informação do tipo
+                startActivity(intent)
                 finish()
             }.onFailure {
                 showError("Erro no cadastro: ${it.message}")
@@ -84,7 +84,7 @@ class CadastroDentistaActivity : AppCompatActivity() {
         val email = findViewById<EditText>(R.id.editTextTextEmailAddress).text.toString()
         val senha = findViewById<EditText>(R.id.editTextTextPassword).text.toString()
         val nome = findViewById<EditText>(R.id.editTextText9).text.toString()
-        val rg = findViewById<EditText>(R.id.editTextText2).text.toString()
+        val rg = findViewById<EditText>(R.id.editTextRG).text.toString()
         val cro = findViewById<EditText>(R.id.editTextText2).text.toString()
         val spinnerPosition = spinner.selectedItemPosition
 
@@ -113,14 +113,6 @@ class CadastroDentistaActivity : AppCompatActivity() {
     private fun showError(message: String) {
         AlertDialog.Builder(this)
             .setTitle("Erro")
-            .setMessage(message)
-            .setPositiveButton("OK", null)
-            .show()
-    }
-
-    private fun showSuccess(message: String) {
-        AlertDialog.Builder(this)
-            .setTitle("Sucesso")
             .setMessage(message)
             .setPositiveButton("OK", null)
             .show()

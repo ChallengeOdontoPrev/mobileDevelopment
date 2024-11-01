@@ -64,8 +64,9 @@ class CadastroAtendenteActivity : AppCompatActivity() {
 
         viewModel.cadastroStatus.observe(this) { result ->
             result.onSuccess {
-                showSuccess("Cadastro realizado com sucesso!")
-                startActivity(Intent(this, LoginAtendenteActivity::class.java))
+                val intent = Intent(this, CadastroConcluidoActivity::class.java)
+                intent.putExtra("tipo_usuario", "atendente") // Adicionando informação do tipo
+                startActivity(intent)
                 finish()
             }.onFailure {
                 showError("Erro no cadastro: ${it.message}")
@@ -109,14 +110,6 @@ class CadastroAtendenteActivity : AppCompatActivity() {
     private fun showError(message: String) {
         AlertDialog.Builder(this)
             .setTitle("Erro")
-            .setMessage(message)
-            .setPositiveButton("OK", null)
-            .show()
-    }
-
-    private fun showSuccess(message: String) {
-        AlertDialog.Builder(this)
-            .setTitle("Sucesso")
             .setMessage(message)
             .setPositiveButton("OK", null)
             .show()
