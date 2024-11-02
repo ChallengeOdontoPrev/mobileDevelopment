@@ -1,6 +1,7 @@
 package com.example.appodontoprev
 
 import CadastroAtendenteViewModel
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -14,12 +15,14 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.appodontoprev.data.model.response.ClinicResponse
+import java.util.Calendar
 
 class CadastroAtendenteActivity : AppCompatActivity() {
     private val viewModel: CadastroAtendenteViewModel by viewModels()
     private lateinit var spinner: Spinner
     private lateinit var progressBar: ProgressBar
     private lateinit var clinicas: List<ClinicResponse>
+    private lateinit var editTextDataNascimento: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,11 +31,13 @@ class CadastroAtendenteActivity : AppCompatActivity() {
         setupViews()
         setupObservers()
         setupListeners()
+        setupDatePicker()
     }
 
     private fun setupViews() {
         spinner = findViewById(R.id.spinner)
         progressBar = findViewById(R.id.progressBar)
+        editTextDataNascimento = findViewById(R.id.editTextDataNascimento)
 
         findViewById<TextView>(R.id.botaoVoltarLogin).setOnClickListener {
             startActivity(Intent(this, LoginAtendenteActivity::class.java))
@@ -42,6 +47,38 @@ class CadastroAtendenteActivity : AppCompatActivity() {
         findViewById<Button>(R.id.botaoVoltarCadastro).setOnClickListener {
             startActivity(Intent(this, LoginAtendenteActivity::class.java))
             finish()
+        }
+    }
+
+    private fun setupDatePicker() {
+        editTextDataNascimento.setOnClickListener {
+            val calendar = Calendar.getInstance()
+
+            val datePickerDialog = DatePickerDialog(
+                this,
+                { _, year, month, dayOfMonth ->
+                    // Formato dd/MM/yyyy
+                    val formattedDate = String.format(
+                        "%02d/%02d/%04d",
+                        dayOfMonth,
+                        month + 1,
+                        year
+                    )
+                    editTextDataNascimento.setText(formattedDate)
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            )
+
+            // Define data máxima (hoje)
+            datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
+
+            // Define data mínima (100 anos atrás)
+            calendar.add(Calendar.YEAR, -100)
+            datePickerDialog.datePicker.minDate = calendar.timeInMillis
+
+            datePickerDialog.show()
         }
     }
 
@@ -65,7 +102,7 @@ class CadastroAtendenteActivity : AppCompatActivity() {
         viewModel.cadastroStatus.observe(this) { result ->
             result.onSuccess {
                 val intent = Intent(this, CadastroConcluidoActivity::class.java)
-                intent.putExtra("tipo_usuario", "atendente") // Adicionando informação do tipo
+                intent.putExtra("tipo_usuario", "atendente")
                 startActivity(intent)
                 finish()
             }.onFailure {
@@ -84,27 +121,65 @@ class CadastroAtendenteActivity : AppCompatActivity() {
         val email = findViewById<EditText>(R.id.editTextTextEmailAddress).text.toString()
         val senha = findViewById<EditText>(R.id.editTextTextPassword).text.toString()
         val nome = findViewById<EditText>(R.id.editTextText9).text.toString()
+        val rg = findViewById<EditText>(R.id.editTextRG).text.toString()
+        val dataNascimento = editTextDataNascimento.text.toString()
         val spinnerPosition = spinner.selectedItemPosition
 
-        if (validarCampos(email, senha, nome) && spinnerPosition >= 0) {
+        if (validarCampos(email, senha, nome, rg, dataNascimento) && spinnerPosition >= 0) {
             val clinicId = clinicas[spinnerPosition].id
+            // Converter data para formato yyyy-MM-dd antes de enviar para a API
+            val dataFormatadaAPI = convertDateFormatToAPI(dataNascimento)
             viewModel.cadastrarAtendente(
                 email = email,
                 senha = senha,
                 nome = nome,
-                rg = "12345678", // Você precisa adicionar um campo RG no layout
-                dataNascimento = "2000-01-01", // Você precisa adicionar um campo data no layout
+                rg = rg,
+                dataNascimento = dataFormatadaAPI,
                 clinicId = clinicId
             )
         }
     }
 
-    private fun validarCampos(email: String, senha: String, nome: String): Boolean {
-        if (email.isBlank() || senha.isBlank() || nome.isBlank()) {
+    private fun convertDateFormatToAPI(date: String): String {
+        // Converte de dd/MM/yyyy para yyyy-MM-dd
+        val parts = date.split("/")
+        return "${parts[2]}-${parts[1]}-${parts[0]}"
+    }
+
+    private fun validarCampos(email: String, senha: String, nome: String, rg: String, dataNascimento: String): Boolean {
+        if (email.isBlank() || senha.isBlank() || nome.isBlank() || rg.isBlank() || dataNascimento.isBlank()) {
             showError("Todos os campos são obrigatórios")
             return false
         }
+
+        if (!isValidDate(dataNascimento)) {
+            showError("Data de nascimento deve estar no formato DD/MM/AAAA")
+            return false
+        }
+
         return true
+    }
+
+    private fun isValidDate(date: String): Boolean {
+        return try {
+            val pattern = "\\d{2}/\\d{2}/\\d{4}".toRegex()
+            if (!date.matches(pattern)) {
+                return false
+            }
+
+            val parts = date.split("/")
+            val day = parts[0].toInt()
+            val month = parts[1].toInt()
+            val year = parts[2].toInt()
+
+            if (year < 1900 || year > 2100) return false
+            if (month < 1 || month > 12) return false
+            if (day < 1 || day > 31) return false
+
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 
     private fun showError(message: String) {

@@ -20,8 +20,6 @@ class CadastroConcluidoActivity : AppCompatActivity() {
                 else -> Intent(this, MenuLoginActivity::class.java)
             }
 
-            // Limpa a pilha de activities anteriores
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             finish()
         }
