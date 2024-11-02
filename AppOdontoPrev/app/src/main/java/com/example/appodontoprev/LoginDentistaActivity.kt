@@ -4,17 +4,25 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-
+import com.example.appodontoprev.ui.login.viewmodel.LoginViewModel
 
 class LoginDentistaActivity : AppCompatActivity() {
+    private val viewModel: LoginViewModel by viewModels()
+    private lateinit var progressBar: ProgressBar
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login_dentista)
+
+        progressBar = findViewById(R.id.progressBar)
 
         val botaoVoltar = findViewById<Button>(R.id.botaoVoltar)
         val cadastrarDentistaTextView = findViewById<TextView>(R.id.cadastrarDentistaTextView)
@@ -22,6 +30,8 @@ class LoginDentistaActivity : AppCompatActivity() {
         val btnEntrar = findViewById<Button>(R.id.btnEntrar)
         val emailEditText = findViewById<EditText>(R.id.inputEmailMedi)
         val senhaEditText = findViewById<EditText>(R.id.inputSenhaMedi)
+
+        setupObservers()
 
         botaoVoltar.setOnClickListener {
             val intent = Intent(this, MenuLoginActivity::class.java)
@@ -44,25 +54,47 @@ class LoginDentistaActivity : AppCompatActivity() {
             val email = emailEditText.text.toString()
             val senha = senhaEditText.text.toString()
 
-            if (email.isBlank() || senha.isBlank() || !isEmailValid(email)) {
-                showAlert("Digite um e-mail válido e uma senha")
-            } else {
-                // Salvar o tipo de usuário
-                val sharedPref = getSharedPreferences("AppOdontoPrev", Context.MODE_PRIVATE)
-                with (sharedPref.edit()) {
-                    putString("tipoUsuario", "dentista")
-                    apply()
+            if (validarCampos(email, senha)) {
+                viewModel.realizarLogin(email, senha)
+            }
+        }
+    }
+
+    private fun setupObservers() {
+        viewModel.isLoading.observe(this) { isLoading ->
+            progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        }
+
+        viewModel.loginStatus.observe(this) { result ->
+            result.onSuccess { response ->
+                response.token?.let { token ->
+                    val sharedPref = getSharedPreferences("AppOdontoPrev", Context.MODE_PRIVATE)
+                    with(sharedPref.edit()) {
+                        putString("token", token)
+                        putString("tipoUsuario", "dentista")
+                        apply()
+                    }
                 }
 
                 val intent = Intent(this, MenuPrincipalActivity::class.java)
                 startActivity(intent)
                 finish()
+            }.onFailure { exception ->
+                showAlert("Erro no login: ${exception.message}")
             }
         }
     }
 
-    private fun isEmailValid(email: String): Boolean {
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    private fun validarCampos(email: String, senha: String): Boolean {
+        if (email.isBlank() || senha.isBlank()) {
+            showAlert("Preencha todos os campos")
+            return false
+        }
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            showAlert("Email inválido")
+            return false
+        }
+        return true
     }
 
     private fun showAlert(message: String) {

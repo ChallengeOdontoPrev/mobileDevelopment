@@ -1,5 +1,7 @@
 import com.example.appodontoprev.data.model.request.DentistaSignupRequest
+import com.example.appodontoprev.data.model.request.LoginRequest
 import com.example.appodontoprev.data.model.response.ClinicResponse
+import com.example.appodontoprev.data.model.response.LoginResponse
 import com.example.appodontoprev.data.model.response.SignupResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -15,4 +17,8 @@ interface ApiService {
 
     @GET("clinics")
     suspend fun getClinicas(): Response<List<ClinicResponse>>
+
+    // Novo endpoint
+    @POST("auth/login")
+    suspend fun realizarLogin(@Body request: LoginRequest): Response<LoginResponse>
 }
