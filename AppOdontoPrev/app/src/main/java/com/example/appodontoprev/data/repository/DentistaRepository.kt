@@ -1,14 +1,14 @@
 package com.example.appodontoprev.data.repository
 
+import android.content.Context
 import com.example.appodontoprev.data.api.RetrofitConfig
 import com.example.appodontoprev.data.model.request.DentistaSignupRequest
 import com.example.appodontoprev.data.model.response.ClinicResponse
 import com.example.appodontoprev.data.model.response.SignupResponse
 
-class DentistaRepository {
-    private val apiService = RetrofitConfig.apiService
+class DentistaRepository(private val context: Context) {
+    private val apiService = RetrofitConfig.getInstance(context)
 
-    // Função para cadastrar dentista
     suspend fun cadastrarDentista(dentista: DentistaSignupRequest): Result<SignupResponse> {
         return try {
             val response = apiService.cadastrarDentista(dentista)
@@ -22,7 +22,6 @@ class DentistaRepository {
         }
     }
 
-    // Função para buscar clínicas
     suspend fun getClinicas(): Result<List<ClinicResponse>> {
         return try {
             val response = apiService.getClinicas()

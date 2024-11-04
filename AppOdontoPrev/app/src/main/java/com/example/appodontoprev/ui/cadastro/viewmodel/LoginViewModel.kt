@@ -1,5 +1,7 @@
 package com.example.appodontoprev.ui.login.viewmodel
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,8 +10,8 @@ import com.example.appodontoprev.data.model.response.LoginResponse
 import com.example.appodontoprev.data.repository.LoginRepository
 import kotlinx.coroutines.launch
 
-class LoginViewModel : ViewModel() {
-    private val repository = LoginRepository()
+class LoginViewModel(application: Application) : AndroidViewModel(application) {
+    private val repository = LoginRepository(application.applicationContext)
 
     private val _loginStatus = MutableLiveData<Result<LoginResponse>>()
     val loginStatus: LiveData<Result<LoginResponse>> = _loginStatus

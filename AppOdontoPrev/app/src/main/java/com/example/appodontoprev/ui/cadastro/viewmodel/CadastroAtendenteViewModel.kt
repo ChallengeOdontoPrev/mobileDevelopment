@@ -1,13 +1,16 @@
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appodontoprev.data.model.response.ClinicResponse
 import com.example.appodontoprev.data.model.response.SignupResponse
+import com.example.appodontoprev.data.repository.AtendenteRepository
 import kotlinx.coroutines.launch
 
-class CadastroAtendenteViewModel : ViewModel() {
-    private val repository = AtendenteRepository()
+class CadastroAtendenteViewModel(application: Application) : AndroidViewModel(application) {
+    private val repository = AtendenteRepository(application.applicationContext)
 
     private val _cadastroStatus = MutableLiveData<Result<SignupResponse>>()
     val cadastroStatus: LiveData<Result<SignupResponse>> = _cadastroStatus

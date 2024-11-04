@@ -1,12 +1,12 @@
-// LoginRepository.kt
 package com.example.appodontoprev.data.repository
 
+import android.content.Context
 import com.example.appodontoprev.data.api.RetrofitConfig
 import com.example.appodontoprev.data.model.request.LoginRequest
 import com.example.appodontoprev.data.model.response.LoginResponse
 
-class LoginRepository {
-    private val apiService = RetrofitConfig.apiService
+class LoginRepository(private val context: Context) {
+    private val apiService = RetrofitConfig.getInstance(context)
 
     suspend fun realizarLogin(email: String, senha: String): Result<LoginResponse> {
         return try {

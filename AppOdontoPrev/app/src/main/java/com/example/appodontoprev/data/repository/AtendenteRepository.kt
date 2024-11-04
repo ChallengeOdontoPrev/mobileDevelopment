@@ -1,9 +1,13 @@
+package com.example.appodontoprev.data.repository
+
+import AtendenteSignupRequest
+import android.content.Context
 import com.example.appodontoprev.data.api.RetrofitConfig
 import com.example.appodontoprev.data.model.response.ClinicResponse
 import com.example.appodontoprev.data.model.response.SignupResponse
 
-class AtendenteRepository {
-    private val apiService = RetrofitConfig.apiService
+class AtendenteRepository(private val context: Context) {
+    private val apiService = RetrofitConfig.getInstance(context)
 
     suspend fun cadastrarAtendente(atendente: AtendenteSignupRequest): Result<SignupResponse> {
         return try {

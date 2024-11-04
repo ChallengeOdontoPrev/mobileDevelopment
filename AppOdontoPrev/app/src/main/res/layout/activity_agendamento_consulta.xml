@@ -11,32 +11,43 @@
         android:padding="16dp"
         android:gravity="center_horizontal">
 
+        <!-- Barra de Progresso -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginTop="16dp"/>
+
         <Space
             android:layout_width="match_parent"
             android:layout_height="20dp" />
 
+        <!-- Botão Voltar -->
         <ImageButton
             android:id="@+id/btnVolAgenConsul"
             android:layout_width="44dp"
             android:layout_height="33dp"
             android:layout_gravity="start"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Back button"
+            android:contentDescription="Voltar"
             android:src="@drawable/vol" />
 
+        <!-- Título -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Agendamento de Consulta"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textColor="#FFFFFF"
             android:fontFamily="@font/open_sans"
             android:textStyle="bold"
-            android:gravity="center"
-            android:layout_gravity="center_horizontal" />
+            android:gravity="center"/>
 
+        <!-- Campo de Busca -->
         <EditText
+            android:id="@+id/buscaPaciente"
             android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
@@ -45,9 +56,10 @@
             android:fontFamily="@font/open_sans"
             android:hint="RG paciente"
             android:padding="12dp"
-            android:textColorHint="#9E9E9E" />
+            android:textColorHint="#9E9E9E"
+            android:inputType="text"/>
 
-
+        <!-- Dados do Paciente -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,128 +67,131 @@
             android:fontFamily="@font/open_sans"
             android:text="Dados Paciente"
             android:textColor="@android:color/white"
-            android:textFontWeight="800"
-            android:textSize="18sp" />
+            android:textStyle="bold"
+            android:textSize="18sp"/>
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="20dp" />
 
+        <!-- Nome do Paciente -->
         <EditText
+            android:id="@+id/nomePaciente"
             android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@drawable/rounded_input"
             android:hint="Nome Completo"
-            android:padding="15dp" />
+            android:padding="15dp"
+            android:enabled="false"
+            android:textColor="#000000"/>
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="10dp" />
-
+        <!-- RG do Paciente -->
         <EditText
+            android:id="@+id/rgPaciente"
             android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@drawable/rounded_input"
             android:hint="RG"
-            android:padding="15dp" />
+            android:padding="15dp"
+            android:enabled="false"
+            android:textColor="#000000"/>
 
+        <!-- Data de Nascimento -->
         <EditText
+            android:id="@+id/dataNascimentoPaciente"
             android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@drawable/rounded_input"
-            android:drawableEnd="@drawable/calendario"
-            android:hint="Data Nacimento"
-            android:padding="15dp" />
+            android:hint="Data Nascimento"
+            android:padding="15dp"
+            android:enabled="false"
+            android:textColor="#000000"/>
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="10dp" />
-
+        <!-- ID Odontoprev -->
         <EditText
+            android:id="@+id/idOdontoPrevPacinete"
             android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@drawable/rounded_input"
-            android:hint="ID odontoprev"
-            android:padding="15dp" />
+            android:hint="ID Odontoprev"
+            android:padding="15dp"
+            android:enabled="false"
+            android:textColor="#000000"/>
 
+        <!-- Dados da Consulta -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:fontFamily="@font/open_sans"
-            android:text="Dados consulta"
+            android:text="Dados da Consulta"
             android:textColor="@android:color/white"
-            android:textFontWeight="800"
-            android:textSize="18sp" />
+            android:textStyle="bold"
+            android:textSize="18sp"/>
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="20dp" />
 
+        <!-- Spinner Serviços -->
         <Spinner
-            android:layout_width="281dp"
+            android:id="@+id/spinnerServicos"
+            android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@drawable/rounded_input"
-            android:entries="@array/servicos"
-            android:padding="15dp" />
+            android:padding="15dp"/>
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="10dp" />
-
+        <!-- Data da Consulta -->
         <EditText
+            android:id="@+id/dataConsulta"
             android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@drawable/rounded_input"
             android:drawableEnd="@drawable/calendario"
-            android:hint="Data Consulta"
-            android:padding="15dp" />
+            android:hint="Data da Consulta"
+            android:focusable="false"
+            android:clickable="true"
+            android:padding="15dp"/>
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="10dp" />
-
+        <!-- Horário da Consulta -->
         <EditText
+            android:id="@+id/horarioConsulta"
             android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@drawable/rounded_input"
             android:drawableEnd="@drawable/relogio"
-            android:hint="Horário Consulta"
-            android:padding="15dp" />
+            android:hint="Horário da Consulta"
+            android:focusable="false"
+            android:clickable="true"
+            android:padding="15dp"/>
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="10dp" />
-
+        <!-- Spinner Dentistas -->
         <Spinner
-            android:layout_width="281dp"
+            android:id="@+id/spinnerDentistas"
+            android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@drawable/rounded_input"
-            android:entries="@array/dentist_names"
-            android:padding="15dp" />
+            android:padding="15dp"/>
 
+        <!-- Botão Agendar -->
         <Button
             android:id="@+id/btnAgenConsul"
-            android:layout_width="325dp"
+            android:layout_width="280dp"
             android:layout_height="60dp"
             android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
             android:backgroundTint="#FF6052"
-            android:padding="16dp"
             android:text="Agendar Consulta"
             android:textColor="@android:color/white"
-            android:textSize="16dp" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="20dp" />
+            android:textSize="16sp"/>
 
     </LinearLayout>
 </ScrollView>

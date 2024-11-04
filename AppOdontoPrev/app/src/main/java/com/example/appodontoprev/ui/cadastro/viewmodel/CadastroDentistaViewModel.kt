@@ -1,6 +1,7 @@
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appodontoprev.data.model.request.DentistaSignupRequest
 import com.example.appodontoprev.data.model.response.ClinicResponse
@@ -8,8 +9,8 @@ import com.example.appodontoprev.data.model.response.SignupResponse
 import com.example.appodontoprev.data.repository.DentistaRepository
 import kotlinx.coroutines.launch
 
-class CadastroDentistaViewModel : ViewModel() {
-    private val repository = DentistaRepository()
+class CadastroDentistaViewModel(application: Application) : AndroidViewModel(application) {
+    private val repository = DentistaRepository(application.applicationContext)
 
     // LiveData para o status do cadastro
     private val _cadastroStatus = MutableLiveData<Result<SignupResponse>>()
