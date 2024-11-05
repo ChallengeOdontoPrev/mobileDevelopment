@@ -8,6 +8,11 @@ class AuthInterceptor(private val context: Context) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
 
+        // Não adiciona token para o endpoint de clínicas durante o cadastro
+        if (originalRequest.url.encodedPath.endsWith("/clinics")) {
+            return chain.proceed(originalRequest)
+        }
+
         val sharedPref = context.getSharedPreferences("AppOdontoPrev", Context.MODE_PRIVATE)
         val token = sharedPref.getString("token", null)
 

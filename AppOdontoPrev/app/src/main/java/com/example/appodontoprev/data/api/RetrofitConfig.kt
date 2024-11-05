@@ -11,7 +11,9 @@ import java.util.concurrent.TimeUnit
 object RetrofitConfig {
     private const val BASE_URL = "http://10.0.2.2:8080/"
     private var retrofit: Retrofit? = null
+    private var retrofitNoAuth: Retrofit? = null
     private var apiService: ApiService? = null
+    private var apiServiceNoAuth: ApiService? = null
 
     fun getInstance(context: Context): ApiService {
         if (apiService == null) {
@@ -37,5 +39,30 @@ object RetrofitConfig {
         }
 
         return apiService!!
+    }
+
+    fun getInstanceNoAuth(context: Context): ApiService {
+        if (apiServiceNoAuth == null) {
+            val loggingInterceptor = HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            }
+
+            val okHttpClient = OkHttpClient.Builder()
+                .addInterceptor(loggingInterceptor)
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .build()
+
+            retrofitNoAuth = Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+
+            apiServiceNoAuth = retrofitNoAuth?.create(ApiService::class.java)
+        }
+
+        return apiServiceNoAuth!!
     }
 }
