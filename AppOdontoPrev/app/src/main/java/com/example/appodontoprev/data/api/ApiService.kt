@@ -26,4 +26,7 @@ interface ApiService {
 
     @GET("patients/{rg}")
     suspend fun getPatientByRg(@Path("rg") rg: String): Response<PatientResponse>
+
+    @GET("proceduresType")
+    suspend fun getProcedures(): Response<List<ProcedureResponse>>
 }

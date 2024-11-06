@@ -2,10 +2,10 @@ package com.example.appodontoprev
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -47,7 +47,6 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
     }
 
     private fun setupViews() {
-        // Inicialização das views
         progressBar = findViewById(R.id.progressBar)
         btnVolAgenConsul = findViewById(R.id.btnVolAgenConsul)
         btnAgenConsul = findViewById(R.id.btnAgenConsul)
@@ -61,65 +60,60 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
         horarioConsulta = findViewById(R.id.horarioConsulta)
         spinnerDentistas = findViewById(R.id.spinnerDentistas)
 
-        // Configurar campos como não editáveis
-        nomePaciente.isEnabled = false
-        rgPaciente.isEnabled = false
-        dataNascimentoPaciente.isEnabled = false
-        idOdontoPrevPacinete.isEnabled = false
-
-        // Configurar focusable=false para os campos de data e hora
+        // Configurar campos de data e hora como não focáveis
         dataConsulta.isFocusable = false
         horarioConsulta.isFocusable = false
+        dataNascimentoPaciente.isFocusable = false
     }
 
     private fun setupObservers() {
-        // Observer para o estado de loading
         viewModel.isLoading.observe(this) { isLoading ->
             progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-            // Desabilitar a interação com a UI durante o carregamento
-            btnAgenConsul.isEnabled = !isLoading
-            buscaPaciente.isEnabled = !isLoading
-            spinnerServicos.isEnabled = !isLoading
-            spinnerDentistas.isEnabled = !isLoading
-            dataConsulta.isEnabled = !isLoading
-            horarioConsulta.isEnabled = !isLoading
+            setFieldsEnabled(!isLoading)
         }
 
-        // Observer para os dados do paciente
         viewModel.patientData.observe(this) { result ->
             result.onSuccess { patient ->
-                // Preencher campos com os dados do paciente
                 nomePaciente.setText(patient.name)
                 rgPaciente.setText(patient.rg)
                 dataNascimentoPaciente.setText(formatDate(patient.birthDate))
                 idOdontoPrevPacinete.setText(patient.numCard.toString())
             }.onFailure { exception ->
-                // Mostrar erro e limpar campos
                 showErrorDialog(exception.message ?: "Erro desconhecido")
                 clearFields()
+            }
+        }
+
+        viewModel.procedures.observe(this) { result ->
+            result.onSuccess { procedures ->
+                // Adicionar "Selecione um procedimento" como primeira opção
+                val procedureNames = listOf("Selecione um procedimento") + procedures.map { it.name }
+                val adapter = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    procedureNames
+                ).apply {
+                    setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                }
+                spinnerServicos.adapter = adapter
+            }.onFailure { exception ->
+                showErrorDialog("Erro ao carregar procedimentos: ${exception.message}")
             }
         }
     }
 
     private fun setupListeners() {
-        // Listener para o botão voltar
         btnVolAgenConsul.setOnClickListener {
-            val intent = Intent(this, ConsultasActivity::class.java)
-            startActivity(intent)
             finish()
         }
 
-        // Listener para o botão de agendamento
         btnAgenConsul.setOnClickListener {
             if (validateFields()) {
-                showAgendamentoDialog()
-            } else {
-                showErrorDialog("Preencha todos os campos obrigatórios")
+                proceedWithAppointment()
             }
         }
 
-        // Listener para o ícone de busca no EditText
-        buscaPaciente.setOnTouchListener { _, event ->
+        buscaPaciente.setOnTouchListener { v, event ->
             if (event.action == MotionEvent.ACTION_UP) {
                 val drawableRight = 2
                 if (event.rawX >= (buscaPaciente.right - buscaPaciente.compoundDrawables[drawableRight].bounds.width())) {
@@ -130,14 +124,16 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
             false
         }
 
-        // Listener para o campo de data
-        dataConsulta.setOnClickListener {
-            showDatePickerDialog()
+        dataNascimentoPaciente.setOnClickListener {
+            showBirthDatePicker()
         }
 
-        // Listener para o campo de horário
+        dataConsulta.setOnClickListener {
+            showAppointmentDatePicker()
+        }
+
         horarioConsulta.setOnClickListener {
-            showTimePickerDialog()
+            showTimePicker()
         }
     }
 
@@ -150,15 +146,36 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
         }
     }
 
-    private fun showDatePickerDialog() {
+    private fun showBirthDatePicker() {
         val calendar = Calendar.getInstance()
-
-        val datePickerDialog = DatePickerDialog(
+        DatePickerDialog(
             this,
-            { _, year, month, dayOfMonth ->
+            { _, year, month, day ->
                 val selectedDate = String.format(
                     "%02d/%02d/%04d",
-                    dayOfMonth,
+                    day,
+                    month + 1,
+                    year
+                )
+                dataNascimentoPaciente.setText(selectedDate)
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ).apply {
+            datePicker.maxDate = System.currentTimeMillis()
+            show()
+        }
+    }
+
+    private fun showAppointmentDatePicker() {
+        val calendar = Calendar.getInstance()
+        DatePickerDialog(
+            this,
+            { _, year, month, day ->
+                val selectedDate = String.format(
+                    "%02d/%02d/%04d",
+                    day,
                     month + 1,
                     year
                 )
@@ -167,30 +184,22 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH)
-        )
-
-        // Definir data mínima como hoje
-        datePickerDialog.datePicker.minDate = System.currentTimeMillis()
-
-        datePickerDialog.show()
+        ).apply {
+            datePicker.minDate = System.currentTimeMillis()
+            show()
+        }
     }
 
-    private fun showTimePickerDialog() {
+    private fun showTimePicker() {
         val calendar = Calendar.getInstance()
-
         TimePickerDialog(
             this,
             { _, hourOfDay, minute ->
-                // Verificar se está dentro do horário comercial (8h às 18h)
-                if (hourOfDay in 8..17 || (hourOfDay == 18 && minute == 0)) {
-                    val selectedTime = String.format(
-                        "%02d:%02d",
-                        hourOfDay,
-                        minute
-                    )
+                if (isValidBusinessHour(hourOfDay, minute)) {
+                    val selectedTime = String.format("%02d:%02d", hourOfDay, minute)
                     horarioConsulta.setText(selectedTime)
                 } else {
-                    showErrorDialog("Por favor, selecione um horário entre 8:00 e 18:00")
+                    showErrorDialog("Selecione um horário entre 8:00 e 18:00")
                 }
             },
             calendar.get(Calendar.HOUR_OF_DAY),
@@ -199,25 +208,66 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
         ).show()
     }
 
-    private fun showAgendamentoDialog() {
+    private fun isValidBusinessHour(hour: Int, minute: Int): Boolean {
+        return (hour in 8..17) || (hour == 18 && minute == 0)
+    }
+
+    private fun proceedWithAppointment() {
         AlertDialog.Builder(this)
-            .setTitle("Confirmar Agendamento")
-            .setMessage("Deseja confirmar o agendamento desta consulta?")
-            .setPositiveButton("Confirmar") { _, _ ->
-                // TODO: Implementar a chamada à API para salvar o agendamento
-                Toast.makeText(this, "Em breve: agendamento de consultas", Toast.LENGTH_SHORT).show()
-            }
-            .setNegativeButton("Cancelar", null)
+            .setTitle("Agendamento")
+            .setMessage("Agendamento de consulta em breve.")
+            .setPositiveButton("OK", null)
             .show()
     }
 
     private fun validateFields(): Boolean {
-        return buscaPaciente.text.isNotEmpty() &&
-                nomePaciente.text.isNotEmpty() &&
-                dataConsulta.text.isNotEmpty() &&
-                horarioConsulta.text.isNotEmpty() &&
-                spinnerServicos.selectedItemPosition != 0 &&
-                spinnerDentistas.selectedItemPosition != 0
+        return when {
+            nomePaciente.text.isBlank() -> {
+                showErrorDialog("Nome do paciente é obrigatório")
+                false
+            }
+            rgPaciente.text.isBlank() -> {
+                showErrorDialog("RG do paciente é obrigatório")
+                false
+            }
+            dataNascimentoPaciente.text.isBlank() -> {
+                showErrorDialog("Data de nascimento é obrigatória")
+                false
+            }
+            idOdontoPrevPacinete.text.isBlank() -> {
+                showErrorDialog("ID Odontoprev é obrigatório")
+                false
+            }
+            dataConsulta.text.isBlank() -> {
+                showErrorDialog("Data da consulta é obrigatória")
+                false
+            }
+            horarioConsulta.text.isBlank() -> {
+                showErrorDialog("Horário da consulta é obrigatório")
+                false
+            }
+            spinnerServicos.selectedItemPosition == 0 -> {
+                showErrorDialog("Selecione um procedimento")
+                false
+            }
+            spinnerDentistas.selectedItemPosition == 0 -> {
+                showErrorDialog("Selecione um dentista")
+                false
+            }
+            else -> true
+        }
+    }
+
+    private fun setFieldsEnabled(enabled: Boolean) {
+        nomePaciente.isEnabled = enabled
+        rgPaciente.isEnabled = enabled
+        dataNascimentoPaciente.isEnabled = enabled
+        idOdontoPrevPacinete.isEnabled = enabled
+        spinnerServicos.isEnabled = enabled
+        dataConsulta.isEnabled = enabled
+        horarioConsulta.isEnabled = enabled
+        spinnerDentistas.isEnabled = enabled
+        btnAgenConsul.isEnabled = enabled
     }
 
     private fun formatDate(dateStr: String): String {
@@ -244,5 +294,17 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
             .setMessage(message)
             .setPositiveButton("OK", null)
             .show()
+    }
+
+    private fun showSuccessMessage(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+    private fun getSelectedProcedure(): String? {
+        return if (spinnerServicos.selectedItemPosition > 0) {
+            spinnerServicos.selectedItem as String
+        } else {
+            null
+        }
     }
 }
