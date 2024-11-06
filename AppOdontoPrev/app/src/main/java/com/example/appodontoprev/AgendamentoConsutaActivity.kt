@@ -2,6 +2,7 @@ package com.example.appodontoprev
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
@@ -47,6 +48,7 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
     }
 
     private fun setupViews() {
+        // Inicialização das views
         progressBar = findViewById(R.id.progressBar)
         btnVolAgenConsul = findViewById(R.id.btnVolAgenConsul)
         btnAgenConsul = findViewById(R.id.btnAgenConsul)
@@ -67,11 +69,13 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
+        // Observer para estado de loading
         viewModel.isLoading.observe(this) { isLoading ->
             progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             setFieldsEnabled(!isLoading)
         }
 
+        // Observer para dados do paciente
         viewModel.patientData.observe(this) { result ->
             result.onSuccess { patient ->
                 nomePaciente.setText(patient.name)
@@ -84,9 +88,9 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
             }
         }
 
+        // Observer para procedimentos
         viewModel.procedures.observe(this) { result ->
             result.onSuccess { procedures ->
-                // Adicionar "Selecione um procedimento" como primeira opção
                 val procedureNames = listOf("Selecione um procedimento") + procedures.map { it.name }
                 val adapter = ArrayAdapter(
                     this,
@@ -100,19 +104,55 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
                 showErrorDialog("Erro ao carregar procedimentos: ${exception.message}")
             }
         }
+
+        // Observer para dentistas
+        viewModel.dentists.observe(this) { result ->
+            result.onSuccess { dentists ->
+                val dentistNames = listOf("Selecione um dentista") + dentists.map { it.name }
+                val adapter = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    dentistNames
+                ).apply {
+                    setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                }
+                spinnerDentistas.adapter = adapter
+            }.onFailure { exception ->
+                showErrorDialog("Erro ao carregar dentistas: ${exception.message}")
+            }
+        }
+
+        // Observer para mensagens de erro
+        viewModel.errorMessage.observe(this) { message ->
+            message?.let {
+                showErrorDialog(it)
+                viewModel.clearMessages()
+            }
+        }
+
+        // Observer para mensagens de sucesso
+        viewModel.successMessage.observe(this) { message ->
+            message?.let {
+                showSuccessMessage(it)
+                viewModel.clearMessages()
+            }
+        }
     }
 
     private fun setupListeners() {
+        // Listener para botão voltar
         btnVolAgenConsul.setOnClickListener {
             finish()
         }
 
+        // Listener para botão de agendar
         btnAgenConsul.setOnClickListener {
             if (validateFields()) {
                 proceedWithAppointment()
             }
         }
 
+        // Listener para busca de paciente
         buscaPaciente.setOnTouchListener { v, event ->
             if (event.action == MotionEvent.ACTION_UP) {
                 val drawableRight = 2
@@ -124,6 +164,7 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
             false
         }
 
+        // Listeners para campos de data e hora
         dataNascimentoPaciente.setOnClickListener {
             showBirthDatePicker()
         }
@@ -213,11 +254,22 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
     }
 
     private fun proceedWithAppointment() {
-        AlertDialog.Builder(this)
-            .setTitle("Agendamento")
-            .setMessage("Agendamento de consulta em breve.")
-            .setPositiveButton("OK", null)
-            .show()
+        // Obter dados selecionados
+        val procedureId = viewModel.getSelectedProcedureId(spinnerServicos.selectedItemPosition)
+        val dentistId = viewModel.getSelectedDentistId(spinnerDentistas.selectedItemPosition)
+        val date = dataConsulta.text.toString()
+        val time = horarioConsulta.text.toString()
+
+        if (procedureId != null && dentistId != null) {
+            // TODO: Implementar lógica de agendamento
+            AlertDialog.Builder(this)
+                .setTitle("Agendamento")
+                .setMessage("Agendamento de consulta em breve.")
+                .setPositiveButton("OK", null)
+                .show()
+        } else {
+            showErrorDialog("Erro ao obter dados do agendamento")
+        }
     }
 
     private fun validateFields(): Boolean {
@@ -298,13 +350,5 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
 
     private fun showSuccessMessage(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-    }
-
-    private fun getSelectedProcedure(): String? {
-        return if (spinnerServicos.selectedItemPosition > 0) {
-            spinnerServicos.selectedItem as String
-        } else {
-            null
-        }
     }
 }

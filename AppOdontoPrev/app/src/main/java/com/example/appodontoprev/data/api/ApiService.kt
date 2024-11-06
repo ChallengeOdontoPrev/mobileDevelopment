@@ -29,4 +29,7 @@ interface ApiService {
 
     @GET("proceduresType")
     suspend fun getProcedures(): Response<List<ProcedureResponse>>
+
+    @GET("auth")
+    suspend fun getDentists(@Query("role") role: String = "DENTISTA"): Response<DentistResponse>
 }
