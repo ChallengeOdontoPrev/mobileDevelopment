@@ -1,8 +1,7 @@
-package com.example.appodontoprev.ui.agendamento.activity
+package com.example.appodontoprev
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
@@ -19,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.appodontoprev.R
 import com.example.appodontoprev.ui.agendamento.viewmodel.AgendamentoConsultaViewModel
 import java.util.Calendar
+
 
 class AgendamentoConsutaActivity : AppCompatActivity() {
     private val viewModel: AgendamentoConsultaViewModel by viewModels()
@@ -38,6 +38,7 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
     private lateinit var spinnerDentistas: Spinner
 
     private var isPatientFromSearch = false
+    private var currentPatientId: Long? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,7 +79,6 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
         dataNascimentoPaciente.isEnabled = editable
         idOdontoPrevPacinete.isEnabled = editable
     }
-
     private fun setupObservers() {
         // Observer para estado de loading
         viewModel.isLoading.observe(this) { isLoading ->
@@ -89,6 +89,7 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
         // Observer para dados do paciente
         viewModel.patientData.observe(this) { result ->
             result.onSuccess { patient ->
+                currentPatientId = patient.id
                 nomePaciente.setText(patient.name)
                 rgPaciente.setText(patient.rg)
                 dataNascimentoPaciente.setText(viewModel.formatDateForDisplay(patient.birthDate))
@@ -100,14 +101,16 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
                 clearFields()
                 setupEditableFields(true)
                 isPatientFromSearch = false
+                currentPatientId = null
             }
         }
 
         // Observer para criação de paciente
         viewModel.patientCreated.observe(this) { result ->
-            result.onSuccess {
+            result.onSuccess { patient ->
+                currentPatientId = patient.id
                 showSuccessMessage("Paciente cadastrado com sucesso")
-                proceedWithAppointment()
+                createAppointment(patient.id)
             }.onFailure { exception ->
                 showErrorDialog(exception.message ?: "Erro ao criar paciente")
             }
@@ -145,19 +148,18 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
             }
         }
 
-        // Observer para mensagens de erro
-        viewModel.errorMessage.observe(this) { message ->
-            message?.let {
-                showErrorDialog(it)
-                viewModel.clearMessages()
-            }
-        }
-
-        // Observer para mensagens de sucesso
-        viewModel.successMessage.observe(this) { message ->
-            message?.let {
-                showSuccessMessage(it)
-                viewModel.clearMessages()
+        // Observer para agendamento
+        viewModel.appointmentCreated.observe(this) { result ->
+            result.onSuccess {
+                AlertDialog.Builder(this)
+                    .setTitle("Sucesso")
+                    .setMessage("Agendamento realizado com sucesso!")
+                    .setPositiveButton("OK") { _, _ ->
+                        finish()
+                    }
+                    .show()
+            }.onFailure { exception ->
+                showErrorDialog(exception.message ?: "Erro ao criar agendamento")
             }
         }
     }
@@ -185,14 +187,13 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
             false
         }
 
-        // Listener para data de nascimento
+        // Listeners para campos de data
         dataNascimentoPaciente.setOnClickListener {
             if (!isPatientFromSearch) {
                 showBirthDatePicker()
             }
         }
 
-        // Listeners para campos de data e hora da consulta
         dataConsulta.setOnClickListener {
             showAppointmentDatePicker()
         }
@@ -221,8 +222,30 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
                 )
             }
         } else {
-            // Paciente já existe, prosseguir com agendamento
-            proceedWithAppointment()
+            // Paciente já existe, criar agendamento direto
+            currentPatientId?.let { createAppointment(it) }
+                ?: showErrorDialog("Erro ao identificar paciente")
+        }
+    }
+
+    private fun createAppointment(patientId: Long) {
+        val procedureId = viewModel.getSelectedProcedureId(spinnerServicos.selectedItemPosition)
+        val dentistId = viewModel.getSelectedDentistId(spinnerDentistas.selectedItemPosition)
+        val date = dataConsulta.text.toString()
+        val time = horarioConsulta.text.toString()
+
+        if (procedureId != null && dentistId != null) {
+            if (viewModel.validateAppointmentData(date, time)) {
+                viewModel.createAppointment(
+                    date = date,
+                    time = time,
+                    dentistId = dentistId,
+                    patientId = patientId,
+                    procedureId = procedureId
+                )
+            }
+        } else {
+            showErrorDialog("Erro ao obter dados do agendamento")
         }
     }
 
@@ -301,27 +324,6 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
         return (hour in 8..17) || (hour == 18 && minute == 0)
     }
 
-    private fun proceedWithAppointment() {
-        // Obter dados selecionados
-        val procedureId = viewModel.getSelectedProcedureId(spinnerServicos.selectedItemPosition)
-        val dentistId = viewModel.getSelectedDentistId(spinnerDentistas.selectedItemPosition)
-        val date = dataConsulta.text.toString()
-        val time = horarioConsulta.text.toString()
-
-        if (procedureId != null && dentistId != null) {
-            // TODO: Implementar lógica de agendamento
-            AlertDialog.Builder(this)
-                .setTitle("Agendamento")
-                .setMessage("Agendamento realizado com sucesso!")
-                .setPositiveButton("OK") { _, _ ->
-                    finish()
-                }
-                .show()
-        } else {
-            showErrorDialog("Erro ao obter dados do agendamento")
-        }
-    }
-
     private fun validateFields(): Boolean {
         return when {
             nomePaciente.text.isBlank() -> {
@@ -375,6 +377,7 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
         dataNascimentoPaciente.setText("")
         idOdontoPrevPacinete.setText("")
         isPatientFromSearch = false
+        currentPatientId = null
     }
 
     private fun showErrorDialog(message: String) {

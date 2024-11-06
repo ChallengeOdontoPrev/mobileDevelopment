@@ -1,3 +1,4 @@
+import com.example.appodontoprev.data.model.request.AppointmentRequest
 import com.example.appodontoprev.data.model.request.DentistaSignupRequest
 import com.example.appodontoprev.data.model.request.LoginRequest
 import com.example.appodontoprev.data.model.request.PatientRequest
@@ -36,4 +37,7 @@ interface ApiService {
 
     @POST("patients")
     suspend fun createPatient(@Body request: PatientRequest): Response<PatientResponse>
+
+    @POST("appointments")
+    suspend fun createAppointment(@Body request: AppointmentRequest): Response<AppointmentResponse>
 }

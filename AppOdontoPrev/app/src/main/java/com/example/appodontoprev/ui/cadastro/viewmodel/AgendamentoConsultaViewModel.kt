@@ -1,5 +1,6 @@
 package com.example.appodontoprev.ui.agendamento.viewmodel
 
+import AppointmentResponse
 import DentistResponse
 import ProcedureRepository
 import ProcedureResponse
@@ -8,8 +9,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.appodontoprev.data.model.request.AppointmentRequest
 import com.example.appodontoprev.data.model.request.PatientRequest
 import com.example.appodontoprev.data.model.response.PatientResponse
+import com.example.appodontoprev.data.repository.AppointmentRepository
 import com.example.appodontoprev.data.repository.DentistRepository
 import com.example.appodontoprev.data.repository.PatientRepository
 import kotlinx.coroutines.launch
@@ -20,6 +23,7 @@ class AgendamentoConsultaViewModel(application: Application) : AndroidViewModel(
     private val patientRepository = PatientRepository(application.applicationContext)
     private val procedureRepository = ProcedureRepository(application.applicationContext)
     private val dentistRepository = DentistRepository(application.applicationContext)
+    private val appointmentRepository = AppointmentRepository(application.applicationContext)
 
     // LiveData para os dados do paciente
     private val _patientData = MutableLiveData<Result<PatientResponse>>()
@@ -36,6 +40,10 @@ class AgendamentoConsultaViewModel(application: Application) : AndroidViewModel(
     // LiveData para os dentistas
     private val _dentists = MutableLiveData<Result<List<DentistResponse>>>()
     val dentists: LiveData<Result<List<DentistResponse>>> = _dentists
+
+    // LiveData para agendamento
+    private val _appointmentCreated = MutableLiveData<Result<AppointmentResponse>>()
+    val appointmentCreated: LiveData<Result<AppointmentResponse>> = _appointmentCreated
 
     // LiveData para estado de carregamento
     private val _isLoading = MutableLiveData<Boolean>()
@@ -98,6 +106,34 @@ class AgendamentoConsultaViewModel(application: Application) : AndroidViewModel(
         }
     }
 
+    // Criar agendamento
+    fun createAppointment(
+        date: String,
+        time: String,
+        dentistId: Long,
+        patientId: Long,
+        procedureId: Long
+    ) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val formattedDate = formatDateForApi(date)
+                val request = AppointmentRequest(
+                    dateAppointment = formattedDate,
+                    timeAppointment = time,
+                    dentistId = dentistId,
+                    patientId = patientId,
+                    procedureTypeId = procedureId
+                )
+                _appointmentCreated.value = appointmentRepository.createAppointment(request)
+            } catch (e: Exception) {
+                _errorMessage.value = e.message ?: "Erro ao criar agendamento"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
     // Carregar procedimentos
     private fun loadProcedures() {
         viewModelScope.launch {
@@ -117,8 +153,7 @@ class AgendamentoConsultaViewModel(application: Application) : AndroidViewModel(
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val result = dentistRepository.getDentists()
-                _dentists.value = result
+                _dentists.value = dentistRepository.getDentists()
             } catch (e: Exception) {
                 _errorMessage.value = e.message ?: "Erro ao carregar dentistas"
                 _dentists.value = Result.failure(e)
@@ -192,7 +227,7 @@ class AgendamentoConsultaViewModel(application: Application) : AndroidViewModel(
     }
 
     // Formatar data para a API (converter de dd/MM/yyyy para yyyy-MM-dd)
-    private fun formatDateForApi(date: String): String {
+    fun formatDateForApi(date: String): String {
         return try {
             val inputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -241,6 +276,28 @@ class AgendamentoConsultaViewModel(application: Application) : AndroidViewModel(
             numCard.toLong()
         } catch (e: NumberFormatException) {
             _errorMessage.value = "Número do cartão inválido"
+            return false
+        }
+
+        return true
+    }
+
+    // Validar campos do agendamento
+    fun validateAppointmentData(date: String, time: String): Boolean {
+        if (date.isBlank() || time.isBlank()) {
+            _errorMessage.value = "Data e hora são obrigatórios"
+            return false
+        }
+
+        if (!isValidDate(date)) {
+            _errorMessage.value = "Data inválida"
+            return false
+        }
+
+        // Validar formato da hora (HH:mm)
+        val timeRegex = "^([01]?[0-9]|2[0-3]):[0-5][0-9]$".toRegex()
+        if (!time.matches(timeRegex)) {
+            _errorMessage.value = "Hora inválida"
             return false
         }
 
