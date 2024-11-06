@@ -1,5 +1,6 @@
 import com.example.appodontoprev.data.model.request.DentistaSignupRequest
 import com.example.appodontoprev.data.model.request.LoginRequest
+import com.example.appodontoprev.data.model.request.PatientRequest
 import com.example.appodontoprev.data.model.response.ClinicResponse
 import com.example.appodontoprev.data.model.response.LoginResponse
 import com.example.appodontoprev.data.model.response.PatientResponse
@@ -31,5 +32,8 @@ interface ApiService {
     suspend fun getProcedures(): Response<List<ProcedureResponse>>
 
     @GET("auth")
-    suspend fun getDentists(@Query("role") role: String = "DENTISTA"): Response<DentistResponse>
+    suspend fun getDentists(@Query("role") role: String = "DENTISTA"): Response<List<DentistResponse>>
+
+    @POST("patients")
+    suspend fun createPatient(@Body request: PatientRequest): Response<PatientResponse>
 }

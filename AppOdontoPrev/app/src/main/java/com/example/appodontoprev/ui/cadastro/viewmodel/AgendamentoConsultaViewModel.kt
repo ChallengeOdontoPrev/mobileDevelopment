@@ -1,6 +1,5 @@
 package com.example.appodontoprev.ui.agendamento.viewmodel
 
-import DentistRepository
 import DentistResponse
 import ProcedureRepository
 import ProcedureResponse
@@ -9,9 +8,13 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.appodontoprev.data.model.request.PatientRequest
 import com.example.appodontoprev.data.model.response.PatientResponse
+import com.example.appodontoprev.data.repository.DentistRepository
 import com.example.appodontoprev.data.repository.PatientRepository
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class AgendamentoConsultaViewModel(application: Application) : AndroidViewModel(application) {
     private val patientRepository = PatientRepository(application.applicationContext)
@@ -21,6 +24,10 @@ class AgendamentoConsultaViewModel(application: Application) : AndroidViewModel(
     // LiveData para os dados do paciente
     private val _patientData = MutableLiveData<Result<PatientResponse>>()
     val patientData: LiveData<Result<PatientResponse>> = _patientData
+
+    // LiveData para criação de paciente
+    private val _patientCreated = MutableLiveData<Result<PatientResponse>>()
+    val patientCreated: LiveData<Result<PatientResponse>> = _patientCreated
 
     // LiveData para os procedimentos
     private val _procedures = MutableLiveData<Result<List<ProcedureResponse>>>()
@@ -70,6 +77,27 @@ class AgendamentoConsultaViewModel(application: Application) : AndroidViewModel(
         }
     }
 
+    // Criar novo paciente
+    fun createPatient(name: String, rg: String, birthDate: String, numCard: Long) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val formattedDate = formatDateForApi(birthDate)
+                val request = PatientRequest(
+                    name = name,
+                    rg = rg,
+                    birthDate = formattedDate,
+                    numCard = numCard
+                )
+                _patientCreated.value = patientRepository.createPatient(request)
+            } catch (e: Exception) {
+                _errorMessage.value = e.message ?: "Erro ao criar paciente"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
     // Carregar procedimentos
     private fun loadProcedures() {
         viewModelScope.launch {
@@ -89,9 +117,11 @@ class AgendamentoConsultaViewModel(application: Application) : AndroidViewModel(
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                _dentists.value = dentistRepository.getDentists()
+                val result = dentistRepository.getDentists()
+                _dentists.value = result
             } catch (e: Exception) {
                 _errorMessage.value = e.message ?: "Erro ao carregar dentistas"
+                _dentists.value = Result.failure(e)
             } finally {
                 _isLoading.value = false
             }
@@ -117,6 +147,18 @@ class AgendamentoConsultaViewModel(application: Application) : AndroidViewModel(
     // Validar seleção de dentista
     fun isValidDentistSelected(position: Int): Boolean {
         return position > 0
+    }
+
+    // Obter lista de nomes dos dentistas para o spinner
+    fun getDentistNames(): List<String> {
+        val defaultItem = listOf("Selecione um dentista")
+        return defaultItem + (_dentists.value?.getOrNull()?.map { it.name } ?: emptyList())
+    }
+
+    // Obter lista de nomes dos procedimentos para o spinner
+    fun getProcedureNames(): List<String> {
+        val defaultItem = listOf("Selecione um procedimento")
+        return defaultItem + (_procedures.value?.getOrNull()?.map { it.name } ?: emptyList())
     }
 
     // Obter nome do procedimento selecionado
@@ -146,7 +188,62 @@ class AgendamentoConsultaViewModel(application: Application) : AndroidViewModel(
 
     // Verificar se há erros
     fun hasErrors(): Boolean {
-        return _procedures.value?.isFailure == true ||
-                _dentists.value?.isFailure == true
+        return _procedures.value?.isFailure == true || _dentists.value?.isFailure == true
+    }
+
+    // Formatar data para a API (converter de dd/MM/yyyy para yyyy-MM-dd)
+    private fun formatDateForApi(date: String): String {
+        return try {
+            val inputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val parsedDate = inputFormat.parse(date)
+            outputFormat.format(parsedDate!!)
+        } catch (e: Exception) {
+            throw IllegalArgumentException("Formato de data inválido. Use dd/MM/yyyy")
+        }
+    }
+
+    // Formatar data para exibição (converter de yyyy-MM-dd para dd/MM/yyyy)
+    fun formatDateForDisplay(date: String): String {
+        return try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val parsedDate = inputFormat.parse(date)
+            outputFormat.format(parsedDate!!)
+        } catch (e: Exception) {
+            date
+        }
+    }
+
+    // Validar data
+    fun isValidDate(date: String): Boolean {
+        return try {
+            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(date)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    // Validar campos do paciente
+    fun validatePatientData(name: String, rg: String, birthDate: String, numCard: String): Boolean {
+        if (name.isBlank() || rg.isBlank() || birthDate.isBlank() || numCard.isBlank()) {
+            _errorMessage.value = "Todos os campos são obrigatórios"
+            return false
+        }
+
+        if (!isValidDate(birthDate)) {
+            _errorMessage.value = "Data de nascimento inválida"
+            return false
+        }
+
+        try {
+            numCard.toLong()
+        } catch (e: NumberFormatException) {
+            _errorMessage.value = "Número do cartão inválido"
+            return false
+        }
+
+        return true
     }
 }

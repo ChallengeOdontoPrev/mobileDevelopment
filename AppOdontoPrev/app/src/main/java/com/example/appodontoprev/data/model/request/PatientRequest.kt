@@ -1,4 +1,9 @@
+// PatientRequest.kt
 package com.example.appodontoprev.data.model.request
 
-class PatientRequest {
-}
+data class PatientRequest(
+    val name: String,
+    val rg: String,
+    val birthDate: String,
+    val numCard: Long
+)

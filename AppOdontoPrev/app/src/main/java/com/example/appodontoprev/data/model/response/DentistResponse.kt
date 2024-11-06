@@ -1,4 +1,3 @@
-// com.example.appodontoprev.data.model.response.DentistResponse.kt
 data class DentistResponse(
     val id: Long,
     val name: String,

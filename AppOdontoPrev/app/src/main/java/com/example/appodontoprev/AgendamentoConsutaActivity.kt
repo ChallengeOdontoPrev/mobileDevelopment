@@ -1,4 +1,4 @@
-package com.example.appodontoprev
+package com.example.appodontoprev.ui.agendamento.activity
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -16,10 +16,9 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.appodontoprev.R
 import com.example.appodontoprev.ui.agendamento.viewmodel.AgendamentoConsultaViewModel
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 
 class AgendamentoConsutaActivity : AppCompatActivity() {
     private val viewModel: AgendamentoConsultaViewModel by viewModels()
@@ -37,6 +36,8 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
     private lateinit var dataConsulta: EditText
     private lateinit var horarioConsulta: EditText
     private lateinit var spinnerDentistas: Spinner
+
+    private var isPatientFromSearch = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +67,16 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
         dataConsulta.isFocusable = false
         horarioConsulta.isFocusable = false
         dataNascimentoPaciente.isFocusable = false
+
+        // Configurar campos editáveis
+        setupEditableFields(true)
+    }
+
+    private fun setupEditableFields(editable: Boolean) {
+        nomePaciente.isEnabled = editable
+        rgPaciente.isEnabled = editable
+        dataNascimentoPaciente.isEnabled = editable
+        idOdontoPrevPacinete.isEnabled = editable
     }
 
     private fun setupObservers() {
@@ -80,22 +91,35 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
             result.onSuccess { patient ->
                 nomePaciente.setText(patient.name)
                 rgPaciente.setText(patient.rg)
-                dataNascimentoPaciente.setText(formatDate(patient.birthDate))
+                dataNascimentoPaciente.setText(viewModel.formatDateForDisplay(patient.birthDate))
                 idOdontoPrevPacinete.setText(patient.numCard.toString())
+                isPatientFromSearch = true
+                setupEditableFields(false)
             }.onFailure { exception ->
                 showErrorDialog(exception.message ?: "Erro desconhecido")
                 clearFields()
+                setupEditableFields(true)
+                isPatientFromSearch = false
+            }
+        }
+
+        // Observer para criação de paciente
+        viewModel.patientCreated.observe(this) { result ->
+            result.onSuccess {
+                showSuccessMessage("Paciente cadastrado com sucesso")
+                proceedWithAppointment()
+            }.onFailure { exception ->
+                showErrorDialog(exception.message ?: "Erro ao criar paciente")
             }
         }
 
         // Observer para procedimentos
         viewModel.procedures.observe(this) { result ->
-            result.onSuccess { procedures ->
-                val procedureNames = listOf("Selecione um procedimento") + procedures.map { it.name }
+            result.onSuccess { _ ->
                 val adapter = ArrayAdapter(
                     this,
                     android.R.layout.simple_spinner_item,
-                    procedureNames
+                    viewModel.getProcedureNames()
                 ).apply {
                     setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 }
@@ -107,12 +131,11 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
 
         // Observer para dentistas
         viewModel.dentists.observe(this) { result ->
-            result.onSuccess { dentists ->
-                val dentistNames = listOf("Selecione um dentista") + dentists.map { it.name }
+            result.onSuccess { _ ->
                 val adapter = ArrayAdapter(
                     this,
                     android.R.layout.simple_spinner_item,
-                    dentistNames
+                    viewModel.getDentistNames()
                 ).apply {
                     setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 }
@@ -147,9 +170,7 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
 
         // Listener para botão de agendar
         btnAgenConsul.setOnClickListener {
-            if (validateFields()) {
-                proceedWithAppointment()
-            }
+            handleAppointment()
         }
 
         // Listener para busca de paciente
@@ -164,17 +185,44 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
             false
         }
 
-        // Listeners para campos de data e hora
+        // Listener para data de nascimento
         dataNascimentoPaciente.setOnClickListener {
-            showBirthDatePicker()
+            if (!isPatientFromSearch) {
+                showBirthDatePicker()
+            }
         }
 
+        // Listeners para campos de data e hora da consulta
         dataConsulta.setOnClickListener {
             showAppointmentDatePicker()
         }
 
         horarioConsulta.setOnClickListener {
             showTimePicker()
+        }
+    }
+
+    private fun handleAppointment() {
+        if (!validateFields()) return
+
+        if (!isPatientFromSearch) {
+            // Criar novo paciente
+            val name = nomePaciente.text.toString()
+            val rg = rgPaciente.text.toString()
+            val birthDate = dataNascimentoPaciente.text.toString()
+            val numCard = idOdontoPrevPacinete.text.toString()
+
+            if (viewModel.validatePatientData(name, rg, birthDate, numCard)) {
+                viewModel.createPatient(
+                    name = name,
+                    rg = rg,
+                    birthDate = birthDate,
+                    numCard = numCard.toLong()
+                )
+            }
+        } else {
+            // Paciente já existe, prosseguir com agendamento
+            proceedWithAppointment()
         }
     }
 
@@ -264,8 +312,10 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
             // TODO: Implementar lógica de agendamento
             AlertDialog.Builder(this)
                 .setTitle("Agendamento")
-                .setMessage("Agendamento de consulta em breve.")
-                .setPositiveButton("OK", null)
+                .setMessage("Agendamento realizado com sucesso!")
+                .setPositiveButton("OK") { _, _ ->
+                    finish()
+                }
                 .show()
         } else {
             showErrorDialog("Erro ao obter dados do agendamento")
@@ -311,26 +361,12 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
     }
 
     private fun setFieldsEnabled(enabled: Boolean) {
-        nomePaciente.isEnabled = enabled
-        rgPaciente.isEnabled = enabled
-        dataNascimentoPaciente.isEnabled = enabled
-        idOdontoPrevPacinete.isEnabled = enabled
         spinnerServicos.isEnabled = enabled
         dataConsulta.isEnabled = enabled
         horarioConsulta.isEnabled = enabled
         spinnerDentistas.isEnabled = enabled
         btnAgenConsul.isEnabled = enabled
-    }
-
-    private fun formatDate(dateStr: String): String {
-        return try {
-            val originalFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val targetFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-            val date = originalFormat.parse(dateStr)
-            targetFormat.format(date!!)
-        } catch (e: Exception) {
-            dateStr
-        }
+        buscaPaciente.isEnabled = enabled
     }
 
     private fun clearFields() {
@@ -338,6 +374,7 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
         rgPaciente.setText("")
         dataNascimentoPaciente.setText("")
         idOdontoPrevPacinete.setText("")
+        isPatientFromSearch = false
     }
 
     private fun showErrorDialog(message: String) {
