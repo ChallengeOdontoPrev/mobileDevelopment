@@ -1,5 +1,6 @@
 package com.example.appodontoprev.ui.agendamento.viewmodel
 
+
 import AppointmentResponse
 import DentistResponse
 import ProcedureRepository
@@ -13,6 +14,7 @@ import com.example.appodontoprev.data.model.request.AppointmentRequest
 import com.example.appodontoprev.data.model.request.PatientRequest
 import com.example.appodontoprev.data.model.response.PatientResponse
 import com.example.appodontoprev.data.repository.AppointmentRepository
+
 import com.example.appodontoprev.data.repository.DentistRepository
 import com.example.appodontoprev.data.repository.PatientRepository
 import kotlinx.coroutines.launch

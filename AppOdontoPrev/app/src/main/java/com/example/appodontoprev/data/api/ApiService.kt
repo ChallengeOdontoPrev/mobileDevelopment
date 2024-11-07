@@ -43,13 +43,9 @@ interface ApiService {
     suspend fun createAppointment(@Body request: AppointmentRequest): Response<AppointmentResponse>
 
     @GET("appointments")
-    suspend fun getAppointments(): Response<List<AppointmentResponse>>
+    suspend fun getAppointments(): Response<List<AppointmentListResponse>>
 
-    @GET("appointments/{id}")
-    suspend fun getAppointmentById(@Path("id") id: Long): Response<AppointmentResponse>
 
-    @DELETE("appointments/{id}")
-    suspend fun deleteAppointment(@Path("id") id: Long): Response<Void>
 
 
 }

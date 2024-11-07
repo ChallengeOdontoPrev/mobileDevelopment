@@ -1,67 +1,58 @@
 package com.example.appodontoprev
-
+import AppointmentAdapter
+import AppointmentListResponse
+import ConsultasViewModel
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.appodontoprev.data.repository.AppointmentRepository
-import com.example.appodontoprev.ui.adapter.AppointmentsAdapter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 
-class ConsultasActivity : AppCompatActivity() {
-    private lateinit var adapter: AppointmentsAdapter
-    private lateinit var appointmentRepository: AppointmentRepository
+
+class ConsultasActivity: AppCompatActivity() {
+    private val viewModel: ConsultasViewModel by viewModels()
+    private lateinit var adapter: AppointmentAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
-    private lateinit var btnVolConsu: ImageView
-    private lateinit var addConsulta: ImageView
-    private val coroutineScope = CoroutineScope(Dispatchers.Main + Job())
+    private lateinit var tvEmptyList: TextView
+    private var tipoUsuario: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_consultas)
 
-        // Inicializar o repository
-        appointmentRepository = AppointmentRepository(this)
+        // Recuperar o tipo de usuário
+        val sharedPref = getSharedPreferences("AppOdontoPrev", Context.MODE_PRIVATE)
+        tipoUsuario = sharedPref.getString("tipoUsuario", "") ?: ""
 
-        // Inicializar views
-        setupViews()
-        // Configurar listeners
-        setupListeners()
-        // Carregar consultas
+        initViews()
+        setupRecyclerView()
+        setupObservers()
         loadAppointments()
     }
 
-    private fun setupViews() {
-        // Encontrar views
-        recyclerView = findViewById(R.id.recyclerViewConsultas)
+    private fun initViews() {
+        recyclerView = findViewById(R.id.recyclerViewAppointments)
         progressBar = findViewById(R.id.progressBar)
-        btnVolConsu = findViewById(R.id.btnVolConsu)
-        addConsulta = findViewById(R.id.addConsulta)
+        tvEmptyList = findViewById(R.id.tvEmptyList)
 
-        // Configurar RecyclerView
-        adapter = AppointmentsAdapter()
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        val btnVolConsu = findViewById<ImageView>(R.id.btnVolConsu)
+        val addConsulta = findViewById<ImageView>(R.id.addConsulta)
 
-        // Controlar visibilidade do botão addConsulta baseado no tipo de usuário
-        val sharedPref = getSharedPreferences("AppOdontoPrev", Context.MODE_PRIVATE)
-        val tipoUsuario = sharedPref.getString("tipoUsuario", "") ?: ""
-        addConsulta.visibility = if (tipoUsuario == "atendente") View.VISIBLE else View.GONE
-    }
+        // Controlar a visibilidade do botão addConsulta
+        addConsulta.visibility = if (tipoUsuario == "atendente") {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
 
-    private fun setupListeners() {
-        // Botão voltar
         btnVolConsu.setOnClickListener {
             val intent = Intent(this, MenuPrincipalActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -69,66 +60,80 @@ class ConsultasActivity : AppCompatActivity() {
             finish()
         }
 
-        // Botão adicionar consulta
         addConsulta.setOnClickListener {
-            startActivity(Intent(this, AgendamentoConsutaActivity::class.java))
+            val intent = Intent(this, AgendamentoConsutaActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    private fun setupRecyclerView() {
+        adapter = AppointmentAdapter()
+        recyclerView.apply {
+            layoutManager = LinearLayoutManager(this@ConsultasActivity)
+            adapter = this@ConsultasActivity.adapter
+            setHasFixedSize(false)
         }
 
-        // Click em item da lista
-        adapter.onItemClick = { appointment ->
-            val intent = Intent(this, ConsultaPacienteActivity::class.java).apply {
-                putExtra("consultaId", appointment.id)
-                putExtra("tipoUsuario", getSharedPreferences("AppOdontoPrev", Context.MODE_PRIVATE)
-                    .getString("tipoUsuario", ""))
+        adapter.setOnItemClickListener { appointment ->
+            navigateToAppointmentDetails(appointment)
+        }
+    }
+
+    private fun setupObservers() {
+        viewModel.appointments.observe(this) { result ->
+            progressBar.visibility = View.GONE
+
+            result.onSuccess { appointments ->
+                if (appointments.isEmpty()) {
+                    tvEmptyList.visibility = View.VISIBLE
+                    recyclerView.visibility = View.GONE
+                } else {
+                    tvEmptyList.visibility = View.GONE
+                    recyclerView.visibility = View.VISIBLE
+                    adapter.setAppointments(appointments)
+                }
+            }.onFailure { exception ->
+                handleError(exception)
             }
-            startActivity(intent)
         }
     }
 
     private fun loadAppointments() {
         progressBar.visibility = View.VISIBLE
         recyclerView.visibility = View.GONE
+        tvEmptyList.visibility = View.GONE
+        viewModel.loadAppointments()
+    }
 
-        coroutineScope.launch {
-            try {
-                appointmentRepository.getAppointmentsWithPatientNames()
-                    .onSuccess { appointments ->
-                        if (appointments.isEmpty()) {
-                            showEmptyState()
-                        } else {
-                            adapter.updateAppointments(appointments)
-                            recyclerView.visibility = View.VISIBLE
-                        }
-                    }
-                    .onFailure { exception ->
-                        showError(exception.message ?: "Erro ao carregar consultas")
-                    }
-            } catch (e: Exception) {
-                showError("Erro ao carregar consultas: ${e.message}")
-            } finally {
-                progressBar.visibility = View.GONE
-            }
+    private fun navigateToAppointmentDetails(appointment: AppointmentListResponse) {
+        val intent = Intent(this, ConsultaPacienteActivity::class.java).apply {
+            putExtra("appointmentId", appointment.id)
+            putExtra("patientName", appointment.patient)
+            putExtra("appointmentDate", appointment.dateAppointment)
+            putExtra("appointmentTime", appointment.timeAppointment)
+            putExtra("procedureType", appointment.procedureType)
+            putExtra("clinic", appointment.clinic)
+            putExtra("tipoUsuario", tipoUsuario)
         }
+        startActivity(intent)
     }
 
-    private fun showEmptyState() {
-        // Aqui você pode adicionar uma view para mostrar quando não houver consultas
+    private fun handleError(exception: Throwable) {
+        val errorMessage = when (exception) {
+            is java.net.UnknownHostException -> "Erro de conexão. Verifique sua internet."
+            is java.net.SocketTimeoutException -> "Tempo de conexão esgotado. Tente novamente."
+            else -> "Erro ao carregar consultas: ${exception.message}"
+        }
+        Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
+        tvEmptyList.apply {
+            text = "Não foi possível carregar as consultas"
+            visibility = View.VISIBLE
+        }
         recyclerView.visibility = View.GONE
-        Toast.makeText(this, "Nenhuma consulta encontrada", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showError(message: String) {
-        recyclerView.visibility = View.GONE
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
     override fun onResume() {
         super.onResume()
-        loadAppointments() // Recarrega as consultas quando voltar para a tela
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        coroutineScope.cancel() // Cancela as coroutines quando a activity for destruída
+        loadAppointments()
     }
 }
