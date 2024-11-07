@@ -8,6 +8,7 @@ import com.example.appodontoprev.data.model.response.PatientResponse
 import com.example.appodontoprev.data.model.response.SignupResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -40,4 +41,15 @@ interface ApiService {
 
     @POST("appointments")
     suspend fun createAppointment(@Body request: AppointmentRequest): Response<AppointmentResponse>
+
+    @GET("appointments")
+    suspend fun getAppointments(): Response<List<AppointmentResponse>>
+
+    @GET("appointments/{id}")
+    suspend fun getAppointmentById(@Path("id") id: Long): Response<AppointmentResponse>
+
+    @DELETE("appointments/{id}")
+    suspend fun deleteAppointment(@Path("id") id: Long): Response<Void>
+
+
 }

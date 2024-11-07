@@ -36,15 +36,13 @@ android {
 }
 
 dependencies {
-    // Dependências existentes
+    // AndroidX Core
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.androidx.recyclerview)
 
     // Retrofit e OkHttp
     implementation(libs.retrofit.core)
@@ -58,4 +56,9 @@ dependencies {
     // Lifecycle
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.runtime)
+
+    // Testing
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 }

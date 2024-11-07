@@ -2,6 +2,7 @@ package com.example.appodontoprev
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
@@ -15,10 +16,8 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.example.appodontoprev.R
 import com.example.appodontoprev.ui.agendamento.viewmodel.AgendamentoConsultaViewModel
 import java.util.Calendar
-
 
 class AgendamentoConsutaActivity : AppCompatActivity() {
     private val viewModel: AgendamentoConsultaViewModel by viewModels()
@@ -79,6 +78,7 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
         dataNascimentoPaciente.isEnabled = editable
         idOdontoPrevPacinete.isEnabled = editable
     }
+
     private fun setupObservers() {
         // Observer para estado de loading
         viewModel.isLoading.observe(this) { isLoading ->
@@ -151,13 +151,10 @@ class AgendamentoConsutaActivity : AppCompatActivity() {
         // Observer para agendamento
         viewModel.appointmentCreated.observe(this) { result ->
             result.onSuccess {
-                AlertDialog.Builder(this)
-                    .setTitle("Sucesso")
-                    .setMessage("Agendamento realizado com sucesso!")
-                    .setPositiveButton("OK") { _, _ ->
-                        finish()
-                    }
-                    .show()
+                // Navegar para a tela de ConsultaAgendada
+                val intent = Intent(this, ConsultaAgendadaActivity::class.java)
+                startActivity(intent)
+                finish()
             }.onFailure { exception ->
                 showErrorDialog(exception.message ?: "Erro ao criar agendamento")
             }
