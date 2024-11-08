@@ -1,245 +1,191 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0066FF">
+    android:fillViewport="true">
 
-    <!-- ProgressBar corrigido -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="198dp"
-        android:layout_height="110dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.517"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.084"
-        app:srcCompat="@drawable/iconedentista" />
-
-    <TextView
-        android:id="@+id/textView4"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/open_sans"
-        android:text="Cadastro Dentista"
-        android:textAlignment="center"
-        android:textColor="#FFFFFF"
-        android:textColorHighlight="#FFFFFF"
-        android:textColorLink="#FFFFFF"
-        android:textFontWeight="700"
-        android:textSize="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.201" />
+        android:background="#0066FF"
+        android:paddingBottom="32dp">
 
-    <!-- Nome -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Email -->
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="198dp"
+            android:layout_height="110dp"
+            android:layout_marginTop="32dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/iconedentista" />
 
-    <!-- Senha -->
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="@font/open_sans"
+            android:text="Cadastro Dentista"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textFontWeight="700"
+            android:textSize="25sp"
+            app:layout_constraintTop_toBottomOf="@+id/imageView5" />
 
-    <!-- Data de Nascimento (Novo campo) -->
+        <EditText
+            android:id="@+id/editTextText9"
+            android:layout_width="320dp"
+            android:layout_height="59dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/rounded_input"
+            android:hint="Nome"
+            android:inputType="text"
+            android:padding="15dp"
+            android:textColorHint="#000000"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
-    <!-- RG -->
+        <EditText
+            android:id="@+id/editTextTextEmailAddress"
+            android:layout_width="320dp"
+            android:layout_height="59dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_input"
+            android:hint="E-mail"
+            android:inputType="textEmailAddress"
+            android:padding="15dp"
+            android:textColorHint="#000000"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextText9" />
 
-    <!-- CRO -->
+        <EditText
+            android:id="@+id/editTextTextPassword"
+            android:layout_width="320dp"
+            android:layout_height="59dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_input"
+            android:hint="Senha"
+            android:inputType="textPassword"
+            android:padding="15dp"
+            android:textColorHint="#000000"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextTextEmailAddress" />
 
-    <!-- Spinner Clínicas -->
+        <EditText
+            android:id="@+id/editTextDataNascimento"
+            android:layout_width="320dp"
+            android:layout_height="59dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_input"
+            android:hint="Data de Nascimento"
+            android:inputType="date"
+            android:padding="15dp"
+            android:textColorHint="#000000"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword" />
 
-    <EditText
-        android:id="@+id/editTextText9"
-        android:layout_width="320dp"
-        android:layout_height="59dp"
-        android:background="@drawable/rounded_input"
-        android:ems="10"
-        android:fontFamily="@font/open_sans"
-        android:hint="Nome"
-        android:inputType="text"
-        android:padding="15dp"
-        android:radius="20dp"
-        android:textColorHint="#000000"
-        android:textFontWeight="400"
-        android:textSize="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.275" />
+        <EditText
+            android:id="@+id/editTextRG"
+            android:layout_width="320dp"
+            android:layout_height="59dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_input"
+            android:hint="RG"
+            android:inputType="text"
+            android:padding="15dp"
+            android:textColorHint="#000000"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextDataNascimento" />
 
-    <EditText
-        android:id="@+id/editTextRG"
-        android:layout_width="320dp"
-        android:layout_height="59dp"
-        android:background="@drawable/rounded_input"
-        android:ems="10"
-        android:fontFamily="@font/open_sans"
-        android:hint="RG"
-        android:inputType="text"
-        android:padding="15dp"
-        android:textColorHint="#000000"
-        android:textSize="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.639" />
+        <EditText
+            android:id="@+id/editTextText2"
+            android:layout_width="320dp"
+            android:layout_height="59dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_input"
+            android:hint="CRO"
+            android:inputType="text"
+            android:padding="15dp"
+            android:textColorHint="#000000"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextRG" />
 
-    <EditText
-        android:id="@+id/editTextDataNascimento"
-        android:layout_width="320dp"
-        android:layout_height="59dp"
-        android:background="@drawable/rounded_input"
-        android:ems="10"
-        android:fontFamily="@font/open_sans"
-        android:hint="Data de Nascimento (AAAA-MM-DD)"
-        android:inputType="date"
-        android:padding="15dp"
-        android:textColorHint="#000000"
-        android:textSize="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.55" />
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="320dp"
+            android:layout_height="59dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_input"
+            android:padding="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextText2" />
 
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="320dp"
-        android:layout_height="59dp"
-        android:background="@drawable/rounded_input"
-        android:padding="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.823" />
+        <TextView
+            android:id="@+id/viewVolLogDent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="@font/open_sans"
+            android:text="Já possui cadastro? Login"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textFontWeight="700"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spinner" />
 
-    <EditText
-        android:id="@+id/editTextText2"
-        android:layout_width="320dp"
-        android:layout_height="59dp"
-        android:background="@drawable/rounded_input"
-        android:ems="10"
-        android:fontFamily="@font/open_sans"
-        android:hint="CRO"
-        android:inputType="text"
-        android:padding="15dp"
-        android:radius="20dp"
-        android:textColorHint="#000000"
-        android:textFontWeight="400"
-        android:textSize="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.731" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/viewVolLogDent">
 
-    <EditText
-        android:id="@+id/editTextTextEmailAddress"
-        android:layout_width="320dp"
-        android:layout_height="59dp"
-        android:background="@drawable/rounded_input"
-        android:ems="10"
-        android:fontFamily="@font/open_sans"
-        android:hint="E-mail"
-        android:inputType="textEmailAddress"
-        android:padding="15dp"
-        android:textColorHint="#000000"
-        android:textSize="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.365" />
+            <Button
+                android:id="@+id/botVolLoginDent"
+                android:layout_width="143dp"
+                android:layout_height="63dp"
+                android:layout_marginEnd="16dp"
+                android:backgroundTint="#FF6052"
+                android:text="Voltar"
+                android:textSize="20sp" />
 
-    <EditText
-        android:id="@+id/editTextTextPassword"
-        android:layout_width="320dp"
-        android:layout_height="59dp"
-        android:background="@drawable/rounded_input"
-        android:ems="10"
-        android:fontFamily="@font/open_sans"
-        android:hint="Senha"
-        android:inputType="textPassword"
-        android:padding="15dp"
-        android:textColor="#000000"
-        android:textColorHint="#000000"
-        android:textSize="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.459" />
+            <Button
+                android:id="@+id/btnCadastrarDent"
+                android:layout_width="143dp"
+                android:layout_height="66dp"
+                android:backgroundTint="#FF6052"
+                android:text="Cadastrar"
+                android:textSize="20sp" />
 
-    <Button
-        android:id="@+id/btnCadastrarDent"
-        android:layout_width="143dp"
-        android:layout_height="66dp"
-        android:backgroundTint="#FF6052"
-        android:backgroundTintMode="add"
-        android:text="Cadastrar"
-        android:textSize="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.828"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.972" />
+        </LinearLayout>
 
-    <Button
-        android:id="@+id/botVolLoginDent"
-        android:layout_width="143dp"
-        android:layout_height="63dp"
-        android:backgroundTint="#FF6052"
-        android:backgroundTintMode="add"
-        android:text="Voltar"
-        android:textSize="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.126"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.97" />
-
-    <TextView
-        android:id="@+id/viewVolLogDent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/open_sans"
-        android:text="Já possui cadastro? Login"
-        android:textColor="#FFFFFF"
-        android:textColorHighlight="#FFFFFF"
-        android:textColorLink="#FFFFFF"
-        android:textFontWeight="700"
-        android:textSize="18dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.881" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

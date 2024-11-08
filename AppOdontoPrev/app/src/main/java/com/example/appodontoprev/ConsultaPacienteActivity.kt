@@ -7,54 +7,69 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.example.appodontoprev.AnaliseConsultaActivity
-import com.example.appodontoprev.ConsultasActivity
-import com.example.appodontoprev.R
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class ConsultaPacienteActivity: AppCompatActivity() {
+    private var tipoUsuario: String = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_consulta_paciente)
 
-        val btnVolConsuPac = findViewById<ImageView>(R.id.btnVolConsuPac)
-        val tipoUsuario = intent.getStringExtra("tipoUsuario")
-        val btnIniciarConsulta = findViewById<Button>(R.id.btnIniciarConsulta)
-        val btnExcluirConsulta = findViewById<Button>(R.id.btnExcluirConsulta)
-
-        // Recuperar os dados passados da consulta
+        // Recuperar os dados passados pela intent
+        tipoUsuario = intent.getStringExtra("tipoUsuario") ?: ""
         val nomePaciente = intent.getStringExtra("patientName") ?: ""
         val dataConsulta = intent.getStringExtra("appointmentDate") ?: ""
         val horaConsulta = intent.getStringExtra("appointmentTime") ?: ""
         val procedimento = intent.getStringExtra("procedureType") ?: ""
 
-        // Atualizar as TextViews com os dados da consulta
+        // Inicializar as views
+        val btnVolConsuPac = findViewById<ImageView>(R.id.btnVolConsuPac)
+        val btnIniciarConsulta = findViewById<Button>(R.id.btnIniciarConsulta)
+        val btnExcluirConsulta = findViewById<Button>(R.id.btnExcluirConsulta)
+
+        // Atualizar os TextViews com os dados da consulta
         findViewById<TextView>(R.id.nomePaciente).text = nomePaciente
         findViewById<TextView>(R.id.DataConsulta).text = formatDate(dataConsulta)
         findViewById<TextView>(R.id.horarioConsulta).text = horaConsulta
         findViewById<TextView>(R.id.textViewProcedimento).text = procedimento
 
+        // Configurar listeners dos botões
+        setupListeners(btnVolConsuPac, btnIniciarConsulta, btnExcluirConsulta)
+    }
+
+    private fun setupListeners(
+        btnVolConsuPac: ImageView,
+        btnIniciarConsulta: Button,
+        btnExcluirConsulta: Button
+    ) {
         btnVolConsuPac.setOnClickListener {
-            val intent = Intent(this, ConsultasActivity::class.java)
-            intent.putExtra("tipoUsuario", tipoUsuario)
-            startActivity(intent)
-            finish()
+            navigateBack()
         }
 
         btnIniciarConsulta.setOnClickListener {
-            val intent = Intent(this, AnaliseConsultaActivity::class.java)
-            intent.putExtra("tipoUsuario", tipoUsuario)
+            val intent = Intent(this, AnaliseConsultaActivity::class.java).apply {
+                putExtra("patientName", intent.getStringExtra("patientName"))
+                putExtra("appointmentDate", intent.getStringExtra("appointmentDate"))
+                putExtra("appointmentTime", intent.getStringExtra("appointmentTime"))
+                putExtra("procedureType", intent.getStringExtra("procedureType"))
+                putExtra("tipoUsuario", tipoUsuario)
+            }
             startActivity(intent)
         }
 
         btnExcluirConsulta.setOnClickListener {
-            AlertDialog.Builder(this)
-                .setTitle("Em breve")
-                .setMessage("Ainda não é possível excluir consulta, em breve essa opção estará funcionando.")
-                .setPositiveButton("OK", null)
-                .show()
+            showExcluirConsultaDialog()
         }
+    }
+
+    private fun showExcluirConsultaDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Em breve")
+            .setMessage("Ainda não é possível excluir consulta, em breve essa opção estará funcionando.")
+            .setPositiveButton("OK", null)
+            .show()
     }
 
     private fun formatDate(dateStr: String): String {
@@ -66,5 +81,18 @@ class ConsultaPacienteActivity: AppCompatActivity() {
         } catch (e: Exception) {
             dateStr
         }
+    }
+
+    private fun navigateBack() {
+        val intent = Intent(this, ConsultasActivity::class.java)
+        intent.putExtra("tipoUsuario", tipoUsuario)
+        startActivity(intent)
+        finish()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        super.onBackPressed()
+        navigateBack()
     }
 }

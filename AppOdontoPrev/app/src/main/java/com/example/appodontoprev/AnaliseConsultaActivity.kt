@@ -12,14 +12,16 @@ import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class AnaliseConsultaActivity : AppCompatActivity() {
-
     private lateinit var imageViewFotoInicial: ImageView
     private lateinit var buttonFotoInicial: Button
     private lateinit var imageViewFotoFinal: ImageView
@@ -32,6 +34,7 @@ class AnaliseConsultaActivity : AppCompatActivity() {
     private var tipoUsuario: String = ""
     private var fotoInicialEnviada = false
     private var fotoFinalEnviada = false
+    private var isInitialPhoto = true
 
     private val cameraPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
@@ -50,6 +53,8 @@ class AnaliseConsultaActivity : AppCompatActivity() {
             photoUriInicial?.let {
                 displayImage(it, true)
                 updateCheckBox(checkBoxInicial)
+                fotoInicialEnviada = true
+                enableFotoFinalButton()
             }
         }
     }
@@ -59,6 +64,7 @@ class AnaliseConsultaActivity : AppCompatActivity() {
             photoUriFinal?.let {
                 displayImage(it, false)
                 updateCheckBox(checkBoxFinal)
+                fotoFinalEnviada = true
             }
         }
     }
@@ -67,6 +73,8 @@ class AnaliseConsultaActivity : AppCompatActivity() {
         uri?.let {
             displayImage(it, true)
             updateCheckBox(checkBoxInicial)
+            fotoInicialEnviada = true
+            enableFotoFinalButton()
         }
     }
 
@@ -74,17 +82,33 @@ class AnaliseConsultaActivity : AppCompatActivity() {
         uri?.let {
             displayImage(it, false)
             updateCheckBox(checkBoxFinal)
+            fotoFinalEnviada = true
         }
     }
-
-    private var isInitialPhoto = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_analise_consulta)
 
+        // Recuperar dados da consulta do Intent
+        val nomePaciente = intent.getStringExtra("patientName") ?: ""
+        val dataConsulta = intent.getStringExtra("appointmentDate") ?: ""
+        val horaConsulta = intent.getStringExtra("appointmentTime") ?: ""
+        val procedimento = intent.getStringExtra("procedureType") ?: ""
         tipoUsuario = intent.getStringExtra("tipoUsuario") ?: ""
 
+        // Atualizar TextViews com os dados
+        findViewById<TextView>(R.id.nomePaciente).text = nomePaciente
+        findViewById<TextView>(R.id.dataConsulta).text = formatDate(dataConsulta)
+        findViewById<TextView>(R.id.horarioConsulta).text = horaConsulta
+        findViewById<TextView>(R.id.procedimentoConsulta).text = procedimento
+
+        initializeViews()
+        setupListeners()
+        setupInitialState()
+    }
+
+    private fun initializeViews() {
         imageViewFotoInicial = findViewById(R.id.imageViewFotoInicial)
         buttonFotoInicial = findViewById(R.id.FotoInicial)
         imageViewFotoFinal = findViewById(R.id.imageViewFotoFinal)
@@ -92,12 +116,9 @@ class AnaliseConsultaActivity : AppCompatActivity() {
         checkBoxInicial = findViewById(R.id.checkInicial)
         checkBoxFinal = findViewById(R.id.checkFinal)
         btnFinalConsul = findViewById(R.id.btnFinalConsul)
+    }
 
-        checkBoxInicial.isClickable = false
-        checkBoxFinal.isClickable = false
-
-        disableFotoFinalButton()
-
+    private fun setupListeners() {
         buttonFotoInicial.setOnClickListener {
             isInitialPhoto = true
             showPhotoSourceDialog()
@@ -119,6 +140,16 @@ class AnaliseConsultaActivity : AppCompatActivity() {
                 showAlertDialog()
             }
         }
+
+        findViewById<ImageView>(R.id.btnVolConsuPac)?.setOnClickListener {
+            onBackPressed()
+        }
+    }
+
+    private fun setupInitialState() {
+        checkBoxInicial.isClickable = false
+        checkBoxFinal.isClickable = false
+        disableFotoFinalButton()
     }
 
     private fun showPhotoSourceDialog() {
@@ -190,16 +221,6 @@ class AnaliseConsultaActivity : AppCompatActivity() {
     private fun updateCheckBox(checkBox: CheckBox) {
         checkBox.isChecked = true
         checkBox.buttonTintList = ColorStateList.valueOf(Color.GREEN)
-        runOnUiThread {
-            checkBox.invalidate()
-        }
-
-        if (checkBox == checkBoxInicial) {
-            fotoInicialEnviada = true
-            enableFotoFinalButton()
-        } else if (checkBox == checkBoxFinal) {
-            fotoFinalEnviada = true
-        }
     }
 
     private fun disableFotoFinalButton() {
@@ -244,5 +265,16 @@ class AnaliseConsultaActivity : AppCompatActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
         finish()
+    }
+
+    private fun formatDate(dateStr: String): String {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        return try {
+            val date = inputFormat.parse(dateStr)
+            outputFormat.format(date!!)
+        } catch (e: Exception) {
+            dateStr
+        }
     }
 }
